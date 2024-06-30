@@ -1,0 +1,21 @@
+Proprietary licence for Better RSS Reader
+
+Copyright (c) 2024 OxFaTech
+
+All rights reserved.
+
+1. Licence Grant: Subject to the terms and conditions of this licence, the licensee is granted a non-exclusive, non-transferable licence to use this software.
+
+2. Restrictions:
+   a. Licensee may not copy, modify, distribute, sell, rent, lease or otherwise transfer this Software or any portion thereof without the prior express written permission of the copyright holder.
+   b. The licensee may not create derivative works based on this software.
+
+3. Change Proposals: Licensee may submit modification requests via GitHub. The copyright holder reserves the right to incorporate these changes at its sole discretion.
+
+4. Commercial use: Any commercial use of this software is prohibited without the express written permission of the copyright holder.
+
+5. Disclaimer of Warranty: This software is provided "as is" without warranty of any kind, either expressed or implied, including, but not limited to, the implied warranties of merchantability, fitness for a particular purpose, and non-infringement. The entire risk as to the quality and performance of the Software is with Licensee. If the Software proves defective, Licensee assumes the cost of all necessary servicing, repair or correction.
+
+6. Limitation of Liability: In no event shall the copyright holder be liable for any damages whatsoever (including, without limitation, damages for loss of business profits, business interruption, or loss of information) arising out of the use or inability to use this software, even if the copyright holder has been advised of the possibility of such damages.
+
+7. Contacts: For further information or queries regarding the use of this software, please contact support@oxfatech.de.

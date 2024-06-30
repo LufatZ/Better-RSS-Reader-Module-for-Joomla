@@ -11,8 +11,6 @@
  * For details, see the LICENSE.txt file.
  */
 
-
-
 defined('_JEXEC') or die;
 
 // Lade den Pfad zum RSS-Feed aus den Moduleinstellungen
@@ -37,16 +35,15 @@ if ($rss) {
 
     // Feed-Info
     echo '<div class="feed-info">';
-    if ($headImageUrl) {
+    if ($headImageUrl && $params->get('schow_feed_image', '')) {
         echo '<img src="' . $headImageUrl . '" alt="' . $Title . '" class="fead-head-image">';
     }
-    echo '<h1>' . $Title . '</h1>';
-    echo '<p>' . $Description . '</p>';
-    echo '<ul>';
-    foreach ($params as $param) {
-        echo '<li>'.$param.'</li>';
+    if ($params->get('show_feed_title', '')) {
+        echo '<h1>' . $Title . '</h1>';
     }
-    echo '</ul>';
+    if ($params->get('schow_feed_description')) {
+        echo '<p>' . $Description . '</p>';
+    }
     echo '</div>';
 
     // Ausgabe der einzelnen Artikel
@@ -65,11 +62,11 @@ if ($rss) {
         // Ausgabe des Items
         echo '<div class="rss-item">';
         echo '<h2><a href="'.$itemLink.'">' . $itemTitle . '</a></h2>';
-        if ($itemImageUrl && $params->get('rssimage', '')) {
+        if ($itemImageUrl && $params->get('show_item_image', '')) {
             echo '<div class="rss-item-image"><a href="' . $itemLink . '"><img src="' . $itemImageUrl . '" alt="' . $itemTitle . '"></a></div>';
         }
         echo '<div class="feed-item-description">';
-        if (!empty($itemFeld1 && $params->get('rssitemdate', ''))) {
+        if (!empty($itemFeld1 && $params->get('show_item_date', ''))) {
             echo '<p>'. $itemFeld1 .'</p>';
         }
         if (!empty($itemFeld2 && $params->get('rssitemdate', ''))) {

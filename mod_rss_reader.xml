@@ -1,146 +1,143 @@
-<!--
-  Better RSS Reader
-
-  @license Proprietary Licence
-  @copyright (c) 2024 OxFaTech
-
-  This software is licensed under a proprietary license.
-  Any distribution, modification, or commercial use is prohibited without prior express written permission from the copyright holder.
-  For details, see the LICENSE.txt file.
--->
-
 <?xml version="1.0" encoding="UTF-8"?>
 <extension type="module" client="site" method="upgrade">
-	<name>mod_rss_reader</name>
-	<author>LufatZ | OxFaTech</author>
-	<authorEmail>support@oxfatech.de</authorEmail>
-	<authorUrl>https://oxfatech.de</authorUrl>
-	<version>1.0.0</version>
-	<creationDate>30.06.2024</creationDate>
-	
-	<description>MOD_RSS_READER_XML_DESCRIPTION</description>
-	<files>
-		<filename module="mod_rss_reader">mod_rss_reader.php</filename>
-		<folder>tmpl</folder>
-	</files>
-	<languages>
-		<language tag="en-GB">language/en-GB/mod_feed.ini</language>
-		<language tag="en-GB">language/en-GB/mod_feed.sys.ini</language>
-	</languages>
-	<config>
-		<fields name="params">
-			<fieldset name="basic">
-				<field
-					name="rssurl"
-					type="url"
-					label="MOD_FEED_FIELD_RSSURL_LABEL"
-					filter="url"
-					required="true"
-					validate="url"
-				/>
+    <name>MOD_RSS_READER</name>
+    <author>LufatZ | OxFaTech</author>
+    <authorEmail>support@oxfatech.de</authorEmail>
+    <authorUrl>https://oxfatech.de</authorUrl>
+    <version>1.0.0</version>
+    <creationDate>30.06.2024</creationDate>
+    <license>Proprietary</license>
+    <copyright>(c) 2024 OxFaTech</copyright>
+    
+    <description>MOD_RSS_READER_XML_DESCRIPTION</description>
+    <files>
+        <filename module="mod_rss_reader">mod_rss_reader.php</filename>
+        <folder>tmpl</folder>
+        <folder>language</folder>
+        <filename>LICENSE.txt</filename>
+    </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/mod_rss_reader.ini</language>
+        <language tag="en-GB">language/en-GB/mod_rss_reader.sys.ini</language>
+        <language tag="de-DE">language/de-DE/mod_rss_reader.ini</language>
+        <language tag="de-DE">language/de-DE/mod_rss_reader.sys.ini</language>
+    </languages>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field
+                    name="rssurl"
+                    type="url"
+                    label="MOD_RSS_READER_FIELD_RSSURL_LABEL"
+                    filter="url"
+                    required="true"
+                    validate="url"
+                />
 
-				<field
-					name="rssrtl"
-					type="radio"
-					layout="joomla.form.field.radio.switcher"
-					label="MOD_FEED_FIELD_RTL_LABEL"
-					default="0"
-					filter="integer"
-					>
-					<option value="0">JNO</option>
-					<option value="1">JYES</option>
-				</field>
+                <field
+                    name="show_feed_image"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_SHOW_FEED_IMAGE_LABEL"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+                
+                <field
+                    name="show_feed_description"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_SHOW_FEED_DESCRIPTION_LABEL"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+                
+                <field
+                    name="show_feed_title"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_SHOW_FEED_TITLE_LABEL"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
 
-				<field
-					name="rsstitle"
-					type="radio"
-					layout="joomla.form.field.radio.switcher"
-					label="MOD_FEED_FIELD_RSSTITLE_LABEL"
-					default="1"
-					filter="integer"
-					>
-					<option value="0">JHIDE</option>
-					<option value="1">JSHOW</option>
-				</field>
+                <field
+                    name="show_item_title"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_SHOW_ITEM_TITLE_LABEL"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
 
-				<field
-					name="rssdesc"
-					type="radio"
-					layout="joomla.form.field.radio.switcher"
-					label="MOD_FEED_FIELD_DESCRIPTION_LABEL"
-					default="1"
-					filter="integer"
-					>
-					<option value="0">JHIDE</option>
-					<option value="1">JSHOW</option>
-				</field>
+                <field
+                    name="show_item_description"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_SHOW_ITEM_DESCRIPTION_LABEL"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+                
+                <field
+                    name="word_count"
+                    type="number"
+                    label="MOD_RSS_READER_FIELD_WORD_COUNT_LABEL"
+                    description="MOD_RSS_READER_FIELD_WORD_COUNT_DESC"
+                    default="0"
+                    filter="integer"
+                />
 
-				<field
-					name="rssdate"
-					type="radio"
-					label="MOD_FEED_FIELD_DATE_LABEL"
-					layout="joomla.form.field.radio.switcher"
-					default="0"
-					>
-					<option value="0">JNO</option>
-					<option value="1">JYES</option>
-				</field>
+                <field
+                    name="show_item_date"
+                    type="radio"
+                    label="MOD_RSS_READER_FIELD_SHOW_ITEM_DATE_LABEL"
+                    layout="joomla.form.field.radio.switcher"
+                    default="0"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
 
-				<field
-					name="rssimage"
-					type="radio"
-					layout="joomla.form.field.radio.switcher"
-					label="MOD_FEED_FIELD_IMAGE_LABEL"
-					default="1"
-					filter="integer"
-					>
-					<option value="0">JHIDE</option>
-					<option value="1">JSHOW</option>
-				</field>
+                <field
+                    name="show_item_image"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_SHOW_ITEM_IMAGE_LABEL"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
 
-				<field
-					name="rssitems"
-					type="number"
-					label="MOD_FEED_FIELD_ITEMS_LABEL"
-					default="3"
-					filter="integer"
-					min="1"
-					validate="number"
-				/>
+                <field
+                    name="item_count"
+                    type="number"
+                    label="MOD_RSS_READER_FIELD_ITEM_COUNT_LABEL"
+                    default="3"
+                    filter="integer"
+                    min="1"
+                    validate="number"
+                />
 
-				<field
-					name="rssitemdesc"
-					type="radio"
-					layout="joomla.form.field.radio.switcher"
-					label="MOD_FEED_FIELD_ITEMDESCRIPTION_LABEL"
-					default="1"
-					filter="integer"
-					>
-					<option value="0">JHIDE</option>
-					<option value="1">JSHOW</option>
-				</field>
-
-				<field
-					name="rssitemdate"
-					type="radio"
-					label="MOD_FEED_FIELD_ITEMDATE_LABEL"
-					layout="joomla.form.field.radio.switcher"
-					default="0"
-					filter="integer"
-					>
-					<option value="0">JNO</option>
-					<option value="1">JYES</option>
-				</field>
-
-				<field
-					name="word_count"
-					type="text"
-					label="MOD_FEED_FIELD_WORDCOUNT_LABEL"
-					description="MOD_FEED_FIELD_WORDCOUNT_DESC"
-					default="0"
-					filter="integer"
-				/>
-			</fieldset>
+            </fieldset>
 			<fieldset name="advanced">
 				<field
 					name="layout"

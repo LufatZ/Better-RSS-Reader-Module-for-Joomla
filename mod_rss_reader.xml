@@ -7,13 +7,13 @@
     <version>1.0.0</version>
     <creationDate>30.06.2024</creationDate>
     <license>Proprietary</license>
-    <copyright>(c) 2024 OxFaTech</copyright>
-    
+    <copyright>Copyright (c) 2024 OxFaTech</copyright>
     <description>MOD_RSS_READER_XML_DESCRIPTION</description>
     <files>
         <filename module="mod_rss_reader">mod_rss_reader.php</filename>
         <folder>tmpl</folder>
         <folder>language</folder>
+        <folder>config</folder>
         <filename>LICENSE.txt</filename>
     </files>
     <languages>
@@ -33,6 +33,18 @@
                     required="true"
                     validate="url"
                 />
+                
+                <field
+                    name="show_feed_title"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_SHOW_FEED_TITLE_LABEL"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
 
                 <field
                     name="show_feed_image"
@@ -57,12 +69,22 @@
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
                 </field>
+
+                <field
+                    name="item_count"
+                    type="number"
+                    label="MOD_RSS_READER_FIELD_ITEM_COUNT_LABEL"
+                    default="10"
+                    filter="integer"
+                    min="1"
+                    validate="number"
+                />
                 
                 <field
-                    name="show_feed_title"
+                    name="show_item_title"
                     type="radio"
                     layout="joomla.form.field.radio.switcher"
-                    label="MOD_RSS_READER_FIELD_SHOW_FEED_TITLE_LABEL"
+                    label="MOD_RSS_READER_FIELD_SHOW_ITEM_TITLE_LABEL"
                     default="1"
                     filter="integer"
                     >
@@ -71,10 +93,10 @@
                 </field>
 
                 <field
-                    name="show_item_title"
+                    name="show_item_image"
                     type="radio"
                     layout="joomla.form.field.radio.switcher"
-                    label="MOD_RSS_READER_FIELD_SHOW_ITEM_TITLE_LABEL"
+                    label="MOD_RSS_READER_FIELD_SHOW_ITEM_IMAGE_LABEL"
                     default="1"
                     filter="integer"
                     >
@@ -114,28 +136,49 @@
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
                 </field>
-
-                <field
-                    name="show_item_image"
-                    type="radio"
-                    layout="joomla.form.field.radio.switcher"
-                    label="MOD_RSS_READER_FIELD_SHOW_ITEM_IMAGE_LABEL"
-                    default="1"
-                    filter="integer"
-                    >
-                    <option value="0">JHIDE</option>
-                    <option value="1">JSHOW</option>
-                </field>
-
-                <field
-                    name="item_count"
-                    type="number"
-                    label="MOD_RSS_READER_FIELD_ITEM_COUNT_LABEL"
-                    default="3"
-                    filter="integer"
-                    min="1"
-                    validate="number"
-                />
+                
+                <field type="spacer" name="item_additional_fields_spacer" hr="true"/>
+                
+				<field
+				    name="item_additional_fields_label"
+				    type="note"
+				    label="MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_EXPLANATION_label"
+				    heading="h3"
+				/>
+				<field
+				    name="item_additional_fields_desc"
+				    type="note"
+				    label="MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_EXPLANATION_DESC"
+				    heading="h4"
+				    class="alert alert-info"
+				/>
+				<field
+					name="item_additional_fields"
+					type="subform"
+					multiple="true"
+					min="0"
+					>
+					<form>
+						<field
+							name="tag_name"
+							type="text"
+							label="MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_TAG"
+							default="&lt;example&gt;"
+						/>
+						<field name="tag_option" type="list" default="" required="true" label="MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION_LABEL" description="">
+							<option value="">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_SELECT</option>
+							<option value="0">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION0</option>
+							<option value="1">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION1</option>
+							<option value="1">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION2</option>
+							<option value="1">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION3</option>
+							<option value="1">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION4</option>
+							<option value="1">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION5</option>
+							<option value="1">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION6</option>
+							<option value="1">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION7</option>
+							<option value="1">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION8</option>
+						</field>
+					</form>
+				</field>
 
             </fieldset>
 			<fieldset name="advanced">

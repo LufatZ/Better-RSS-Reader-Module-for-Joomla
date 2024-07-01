@@ -2,6 +2,8 @@
 
  This is a module for Joomla that adds a new and improved RSS reader to your Joomla website.
 
+![image](https://github.com/LufatZ/Better-RSS-Reader-Module-for-Joomla/assets/86516373/7c773b0e-fa9c-45f7-be15-a3944ef03e58)
+
 ## License
  This software is licensed under a proprietary license. Any distribution, modification, or commercial use is prohibited without prior express written permission from the copyright holder. For details, see the [LICENSE.txt file](./LICENSE.txt).
 

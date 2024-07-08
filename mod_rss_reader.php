@@ -14,11 +14,5 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Helper\ModuleHelper;
-use Joomla\Module\Feed\Site\Helper\FeedHelper;
-
-$rssurl = $params->get('rssurl', '');
-$rssrtl = $params->get('rssrtl', 0);
-
-$feed = FeedHelper::getFeed($params);
 
 require ModuleHelper::getLayoutPath('mod_rss_reader', $params->get('layout', 'default'));

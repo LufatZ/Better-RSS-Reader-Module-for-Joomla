@@ -35,6 +35,18 @@
                 />
                 
                 <field
+                    name="show_feed_channel"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_SHOW_FEED_CHANNEL_LABEL"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+                
+                <field
                     name="show_feed_title"
                     type="radio"
                     layout="joomla.form.field.radio.switcher"
@@ -76,7 +88,7 @@
                     label="MOD_RSS_READER_FIELD_ITEM_COUNT_LABEL"
                     default="10"
                     filter="integer"
-                    min="1"
+                    min="0"
                     validate="number"
                 />
                 

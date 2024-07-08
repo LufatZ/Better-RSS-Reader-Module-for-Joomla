@@ -13,40 +13,66 @@
 
 defined('_JEXEC') or die;
 
-// Lade den Pfad zum RSS-Feed aus den Moduleinstellungen
-$rssUrl = $params->get('rssurl', '');
+var_dump($params);                                                                  //DEBUG: display params 
+$GLOBALS['params'] = $params;
 
-// Lade das RSS-Feed
-$rss = simplexml_load_file($rssUrl);
+$rssUrl = getConfig('rssurl');                                                      //load rss url
+$rss = simplexml_load_file($rssUrl);                                                //load rss file from url
 
-// Überprüfen, ob das RSS-Feed erfolgreich geladen wurde
-if ($rss) {
-    // Entnahme des Titels, der Beschreibung und des Bildes des Feeds
-    $Title = (string) $rss->channel->title;
-    $Description = (string) $rss->channel->description;
+if ($rss) {                                                                         //check if rss is loaded successfully
+    echo '<div class="rss rss-feed">';                                              //open tag for rss html output
+    if (getConfig('show_feed_channel')) {
+        buildHead($rss);                                                            //function to build and echo channel head
+    }                                                            
+        buildItems($rss);                                                           //function to build and echo rss items
+    echo '</div>';                                                                  //close tag for rss html output
+} else {
+    echo '<p>Failed to load RSS feed.</p>';
+}
 
-    // Bild-URL des Shops aus dem RSS-Feed extrahieren (falls vorhanden)
-    if (isset($rss->channel->image) && isset($rss->channel->image->url)) {
-        $headImageUrl = (string) $rss->channel->image->url;
+function getConfig($config) {                                                       //function to extract configs from $params
+    return $GLOBALS['params']->get($config, '');
+}
+
+function buildHead($rss) {
+    $chImTitle = '';                                                                //initialize variables
+    $chDescription = '';
+    $chImage = '';
+    
+    if (getConfig('show_feed_title') && isset($rss->channel->title)) {              //get config and prepare channel title
+        $chTitle = '<h1>' . (string) $rss->channel->title . '</h1>';
     }
-
-    // Ausgabe des Feeds
-    echo '<div class="rss-feed">';
-
-    // Feed-Info
-    echo '<div class="feed-info">';
-    if ($headImageUrl && $params->get('schow_feed_image', '')) {
-        echo '<img src="' . $headImageUrl . '" alt="' . $Title . '" class="fead-head-image">';
+    if (getConfig('show_feed_description') && isset($rss->channel->description)) {  //get config and prepare channel description
+        $chDescription = '<div class="rss rss-description-container"><p>' . (string) $rss->channel->description . '</p></div>'; 
     }
-    if ($params->get('show_feed_title', '')) {
-        echo '<h1>' . $Title . '</h1>';
+    
+    if (getConfig('show_feed_image') && isset($rss->channel->image)) {              //get cofig and prepare channel image                                   
+        $chImUrl = $rss->channel->image->url;
+        $chImTitle = $rss->channel->image->title;
+        $chImLink = $rss->channel->image->link;
+        $chImDescription = $rss->channel->image->description;
+        
+        $chImage = 
+            '<div class="rss rss-image-container">
+                <a href="'. $chImLink .'" class="rss rss-image-link">
+                    <figure>
+                        <img class="rss rss-image" src="'. $chImUrl .'" alt="'. $chImTitle .'" />
+                        <figcaption>'. $chImDescription .'</figcaption>
+                    </figure>
+                </a>
+            </div>';
     }
-    if ($params->get('schow_feed_description')) {
-        echo '<p>' . $Description . '</p>';
-    }
-    echo '</div>';
-
+        
+    echo '<div class="rss rss-reader rss-channel rss-head" id="rss-head"';          //open head container
+    echo $chImage;                                                                  //insert content
+    echo $chTitle;
+    echo $chDescription;
+    echo '</div>';                                                                  //close head container
+}
+function buildItems($rss) {
     // Ausgabe der einzelnen Artikel
+    $itemCounter=0;
+    $itemTarget= getConfig('item_count');
     foreach ($rss->channel->item as $item) {
         // Titel, Link und Beschreibung extrahieren
         $itemTitle = (string) $item->title;
@@ -57,34 +83,35 @@ if ($rss) {
         $itemFeld2 = (string) $item->feld2;
         $itemFeld3 = (string) $item->feld3;
         $itemFeld4 = (string) $item->feld4;
-
-
+        
+        
         // Ausgabe des Items
         echo '<div class="rss-item">';
         echo '<h2><a href="'.$itemLink.'">' . $itemTitle . '</a></h2>';
-        if ($itemImageUrl && $params->get('show_item_image', '')) {
+        if ($itemImageUrl && getConfig('show_item_image', '')) {
             echo '<div class="rss-item-image"><a href="' . $itemLink . '"><img src="' . $itemImageUrl . '" alt="' . $itemTitle . '"></a></div>';
         }
         echo '<div class="feed-item-description">';
-        if (!empty($itemFeld1 && $params->get('show_item_date', ''))) {
+        if (!empty($itemFeld1 && getConfig('show_item_date'))) {
             echo '<p>'. $itemFeld1 .'</p>';
         }
-        if (!empty($itemFeld2 && $params->get('rssitemdate', ''))) {
+        if (!empty($itemFeld2 && getConfig('rssitemdate'))) {
             echo '<p>'. $itemFeld2 .'</p>';
         }
-        if (!empty($itemFeld3 && $params->get('rssitemdate', ''))) {
+        if (!empty($itemFeld3 && getConfig('rssitemdate'))) {
             echo '<p>'. $itemFeld3 .'</p>';
         }
-        if (!empty($itemFeld4 && $params->get('rssitemdate', ''))) {
+        if (!empty($itemFeld4 && getConfig('rssitemdate'))) {
             echo '<p>'. $itemFeld4 .'</p>';
         }
         echo '<p>' . strip_tags($itemDescription, '<div><p><a>') . '</p>';
         echo '<a href="' . $itemLink . '" class="button">Ab zum Angebot</a>'; // Button hinzufügen
         echo '</div></div>';
+        
+        $itemCounter++;
+        if ($itemCounter == $itemTarget && getConfig('item_count') != 0) {
+            break;
+        }
     }
-
-    echo '</div>';
-} else {
-    echo 'Failed to load RSS feed.';
 }
 ?>

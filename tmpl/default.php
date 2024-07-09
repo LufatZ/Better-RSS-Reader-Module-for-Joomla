@@ -13,40 +13,53 @@
 
 defined('_JEXEC') or die;
 
-var_dump($params);                                                                  //DEBUG: display params 
 $GLOBALS['params'] = $params;
 
-$rssUrl = getConfig('rssurl');                                                      //load rss url
-$rss = simplexml_load_file($rssUrl);                                                //load rss file from url
+if (getConfig('debug')) {
+    var_dump($params);                                                                  //DEBUG: display params
+}
 
-if ($rss) {                                                                         //check if rss is loaded successfully
-    echo '<div class="rss rss-feed">';                                              //open tag for rss html output
+$rssUrl = getConfig('rssurl');                                                          //load rss url
+$rss = simplexml_load_file($rssUrl);                                                    //load rss file from url
+
+if ($rss) {                                                                             //check if rss is loaded successfully
+    echo '<div class="rss rss-feed">';                                                  //open tag for rss html output
     if (getConfig('show_feed_channel')) {
-        buildHead($rss);                                                            //function to build and echo channel head
+        buildHead($rss);                                                                //function to build and echo channel head
     }                                                            
-        buildItems($rss);                                                           //function to build and echo rss items
-    echo '</div>';                                                                  //close tag for rss html output
+        buildItems($rss);                                                               //function to build and echo rss items
+    echo '</div>';                                                                      //close tag for rss html output
 } else {
     echo '<p>Failed to load RSS feed.</p>';
 }
 
-function getConfig($config) {                                                       //function to extract configs from $params
+function getConfig($config) {                                                           //function to extract configs from $params
     return $GLOBALS['params']->get($config, '');
 }
 
 function buildHead($rss) {
-    $chImTitle = '';                                                                //initialize variables
+    $chImTitle = '';                                                                    //initialize variables
     $chDescription = '';
     $chImage = '';
+    $chLang = '';
+    $chRights = '';
+    $chContactTec = '';
+    $chContactCon = '';
+    $chPubDate = '';
+    $chCategory = '';
+    $chGenerator = '';
     
-    if (getConfig('show_feed_title') && isset($rss->channel->title)) {              //get config and prepare channel title
+    
+    
+    if (getConfig('show_feed_title') && isset($rss->channel->title)) {                  //get config and prepare channel title
         $chTitle = '<h1>' . (string) $rss->channel->title . '</h1>';
     }
-    if (getConfig('show_feed_description') && isset($rss->channel->description)) {  //get config and prepare channel description
+    
+    if (getConfig('show_feed_description') && isset($rss->channel->description)) {      //get config and prepare channel description
         $chDescription = '<div class="rss rss-description-container"><p>' . (string) $rss->channel->description . '</p></div>'; 
     }
     
-    if (getConfig('show_feed_image') && isset($rss->channel->image)) {              //get cofig and prepare channel image                                   
+    if (getConfig('show_feed_image') && isset($rss->channel->image)) {                  //get cofig and prepare channel image                                   
         $chImUrl = $rss->channel->image->url;
         $chImTitle = $rss->channel->image->title;
         $chImLink = $rss->channel->image->link;
@@ -62,12 +75,43 @@ function buildHead($rss) {
                 </a>
             </div>';
     }
+    
+    if (getConfig('show_feed_language')&&isset($rss->channel->language)) {              //get cofig and prepare channel language
+        $chLang = '<p>'.$rss->channel->language.'</p>';
+    }
+    
+    if (getConfig('show_feed_copyright')&&isset($rss->channel->copyright)) {            //get cofig and prepare channel copyright
+        $chRights = '<p>'.$rss->channel->copyright.'</p>';
+    }
+    
+    if (getConfig('show_feed_web_master')&&isset($rss->channel->webMaster)) {           //get cofig and prepare channel web master (technical contact)
+        $chContactTec = '<p>'.$rss->channel->webMaster.'</p>';
+    }
+    if (getConfig('show_feed_managing_editor')&&isset($rss->channel->managingEditor)) { //get cofig and prepare channel managing editor (content contact)
+        $chContactCon = '<p>'.$rss->channel->managingEditor.'</p>';
+    }
+    if (getConfig('show_feed_pub_date')&&isset($rss->channel->pubDate)) {               //get cofig and prepare channel publishing date
+        $chPubDate = '<p>'.$rss->channel->pubDate.'</p>';
+    }
+    if (getConfig('show_feed_category')&&isset($rss->channel->category)) {              //get cofig and prepare channel category
+        $chCategory = '<p>'.$rss->channel->category.'</p>';
+    }
+    if (getConfig('show_feed_generator')&&isset($rss->channel->generator)) {            //get cofig and prepare feed generator (e.g. OxFaTech Feed Generator v1.0)
+        $chGenerator = '<p>'.$rss->channel->generator.'</p>';
+    }
         
-    echo '<div class="rss rss-reader rss-channel rss-head" id="rss-head"';          //open head container
-    echo $chImage;                                                                  //insert content
+    echo '<div class="rss rss-reader rss-channel rss-head" id="rss-head"';              //open head container
+    echo $chImage;                                                                      //insert content
     echo $chTitle;
+    echo $chLang;
+    echo $chRights;
+    echo $chContactTec;
+    echo $chContactCon;
     echo $chDescription;
-    echo '</div>';                                                                  //close head container
+    echo $chPubDate;
+    echo $chCategory;
+    echo $chGenerator;
+    echo '</div>';                                                                      //close head container
 }
 function buildItems($rss) {
     // Ausgabe der einzelnen Artikel

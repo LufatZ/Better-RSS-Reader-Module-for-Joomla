@@ -35,6 +35,35 @@
                 />
                 
                 <field
+                    name="debug"
+                    type="radio"
+                    label="MOD_RSS_READER_FIELD_DEBUG_LABEL"
+                    layout="joomla.form.field.radio.switcher"
+                    default="0"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+                
+                <field type="spacer" name="channel_headline_spacer" hr="true"/>
+                
+				<field
+				    name="channel_headline_label"
+				    type="note"
+				    label="MOD_RSS_READER_FIELD_CHANNEL_HEADLINE_LABEL"
+				    heading="h3"
+				/>
+				
+				<field
+				    name="channel_headline_desc"
+				    type="note"
+				    label="MOD_RSS_READER_FIELD_CHANNEL_HEADLINE_DESC"
+				    heading="h4"
+				    class="alert alert-info"
+				/>
+                
+                <field
                     name="show_feed_channel"
                     type="radio"
                     layout="joomla.form.field.radio.switcher"
@@ -81,6 +110,107 @@
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
                 </field>
+                
+                <field
+                    name="show_feed_language"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_SHOW_FEED_LANGUAGE_LABEL"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+                
+                <field
+                    name="show_feed_copyright"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_SHOW_FEED_COPYRIGHT_LABEL"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+                
+                <field
+                    name="show_feed_managing_editor"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_SHOW_FEED_MANAGING_EDITOR_LABEL"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+                
+                <field
+                    name="show_feed_web_master"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_SHOW_FEED_WEB_MASTER_LABEL"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+                
+                <field
+                    name="show_feed_pub_date"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_SHOW_FEED_PUB_DATE_LABEL"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+ 
+                <field
+                    name="show_feed_category"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_SHOW_FEED_CATEGORY_LABEL"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+                
+                <field
+                    name="show_feed_generator"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_SHOW_FEED_GENERATOR_LABEL"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+                
+                <field type="spacer" name="item_headline_spacer" hr="true"/>
+                
+				<field
+				    name="item_headline_label"
+				    type="note"
+				    label="MOD_RSS_READER_FIELD_ITEM_HEADLINE_LABEL"
+				    heading="h3"
+				/>
+				
+				<field
+				    name="item_headline_desc"
+				    type="note"
+				    label="MOD_RSS_READER_FIELD_ITEM_HEADLINE_DESC"
+				    heading="h4"
+				    class="alert alert-info"
+				/>
 
                 <field
                     name="item_count"

@@ -100,7 +100,7 @@ function buildHead($rss) {
         $chGenerator = '<p>'.$rss->channel->generator.'</p>';
     }
         
-    echo '<div class="rss rss-reader rss-channel rss-head" id="rss-head"';              //open head container
+    echo '<div class="rss rss-reader rss-channel rss-head" id="rss-head">';             //open head container
     echo $chImage;                                                                      //insert content
     echo $chTitle;
     echo $chLang;

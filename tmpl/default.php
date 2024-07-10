@@ -14,14 +14,11 @@
 defined('_JEXEC') or die;
 
 $GLOBALS['params'] = $params;
-
 if (getConfig('debug')) {
     var_dump($params);                                                                  //DEBUG: display params
 }
-
 $rssUrl = getConfig('rssurl');                                                          //load rss url
 $rss = simplexml_load_file($rssUrl);                                                    //load rss file from url
-
 if ($rss) {                                                                             //check if rss is loaded successfully
     echo '<div class="rss rss-feed">';                                                  //open tag for rss html output
     if (getConfig('show_feed_channel')) {
@@ -48,17 +45,13 @@ function buildHead($rss) {
     $chPubDate = '';
     $chCategory = '';
     $chGenerator = '';
-    
-    
-    
+       
     if (getConfig('show_feed_title') && isset($rss->channel->title)) {                  //get config and prepare channel title
         $chTitle = '<h1>' . (string) $rss->channel->title . '</h1>';
     }
-    
     if (getConfig('show_feed_description') && isset($rss->channel->description)) {      //get config and prepare channel description
         $chDescription = '<div class="rss rss-description-container"><p>' . (string) $rss->channel->description . '</p></div>'; 
     }
-    
     if (getConfig('show_feed_image') && isset($rss->channel->image)) {                  //get cofig and prepare channel image                                   
         $chImUrl = $rss->channel->image->url;
         $chImTitle = $rss->channel->image->title;
@@ -79,11 +72,9 @@ function buildHead($rss) {
     if (getConfig('show_feed_language')&&isset($rss->channel->language)) {              //get cofig and prepare channel language
         $chLang = '<p>'.$rss->channel->language.'</p>';
     }
-    
     if (getConfig('show_feed_copyright')&&isset($rss->channel->copyright)) {            //get cofig and prepare channel copyright
         $chRights = '<p>'.$rss->channel->copyright.'</p>';
     }
-    
     if (getConfig('show_feed_web_master')&&isset($rss->channel->webMaster)) {           //get cofig and prepare channel web master (technical contact)
         $chContactTec = '<p>'.$rss->channel->webMaster.'</p>';
     }
@@ -113,44 +104,40 @@ function buildHead($rss) {
     echo $chGenerator;
     echo '</div>';                                                                      //close head container
 }
-function buildItems($rss) {
-    // Ausgabe der einzelnen Artikel
-    $itemCounter=0;
-    $itemTarget= getConfig('item_count');
-    foreach ($rss->channel->item as $item) {
-        // Titel, Link und Beschreibung extrahieren
-        $itemTitle = (string) $item->title;
-        $itemLink = (string) $item->link;
-        $itemDescription = (string) $item->description;
-        $itemImageUrl = (string) $item->enclosure['url'];
-        $itemFeld1 = (string) $item->feld1;
-        $itemFeld2 = (string) $item->feld2;
-        $itemFeld3 = (string) $item->feld3;
-        $itemFeld4 = (string) $item->feld4;
+function buildItems($rss) {                                                             
+    $itemCounter=0;                                                                     //initialize counter variable to limit items
+    $itemTarget= getConfig('item_count');                                               //initialize max items variable
+    
+    foreach ($rss->channel->item as $item) {                                            //loop trough each item of the rss feed
+        $itemTitle = '';                                                                //initialize content variables
+        $itemLink = '';
+        $itemDescription = '';
+        $itemImageUrl = '';
         
+        if (getConfig('show_item_title')&&isset($item->title)) {                        //prepare item title
+            $itemTitle = '<h3>'.$item->title.'</h3>';
+        }
+        if (isset($item->link)){                                                        //prepare item link
+            $itemLink = (string) $item->link;
+        }
+        if (getConfig('show_item_description')&&isset($item->description)) {            //prepare item description
+            $itemDescription = '<p>' . $item->description . '</p>';
+        }
+        if (getConfig('show_item_image')){                                              //prepare item image
+            if (isset($item->enclosure)) {
+                $itemImageUrl = (string) $item->enclosure['url'];
+            }elseif (isset($item->children('media', true)->content->attributes()->url)) { 
+                $itemImageUrl = $item->children('media', true)->content->attributes()->url;
+            }
+        }
         
-        // Ausgabe des Items
         echo '<div class="rss-item">';
-        echo '<h2><a href="'.$itemLink.'">' . $itemTitle . '</a></h2>';
-        if ($itemImageUrl && getConfig('show_item_image', '')) {
-            echo '<div class="rss-item-image"><a href="' . $itemLink . '"><img src="' . $itemImageUrl . '" alt="' . $itemTitle . '"></a></div>';
-        }
-        echo '<div class="feed-item-description">';
-        if (!empty($itemFeld1 && getConfig('show_item_date'))) {
-            echo '<p>'. $itemFeld1 .'</p>';
-        }
-        if (!empty($itemFeld2 && getConfig('rssitemdate'))) {
-            echo '<p>'. $itemFeld2 .'</p>';
-        }
-        if (!empty($itemFeld3 && getConfig('rssitemdate'))) {
-            echo '<p>'. $itemFeld3 .'</p>';
-        }
-        if (!empty($itemFeld4 && getConfig('rssitemdate'))) {
-            echo '<p>'. $itemFeld4 .'</p>';
-        }
-        echo '<p>' . strip_tags($itemDescription, '<div><p><a>') . '</p>';
-        echo '<a href="' . $itemLink . '" class="button">Ab zum Angebot</a>'; // Button hinzufügen
-        echo '</div></div>';
+        echo $itemTitle;
+        echo '<a href="' . $itemLink . '">Link</a>';
+        echo $itemDescription;
+        echo '<img src="' . $itemImageUrl . '" alt="Item Image"/>';
+        echo '</div>';
+        
         
         $itemCounter++;
         if ($itemCounter == $itemTarget && getConfig('item_count') != 0) {

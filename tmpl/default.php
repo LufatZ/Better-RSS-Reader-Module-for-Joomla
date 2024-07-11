@@ -33,6 +33,31 @@ if ($rss) {                                                                     
 function getConfig($config) {                                                           //function to extract configs from $params
     return $GLOBALS['params']->get($config, '');
 }
+function processImg($url = '', $desc = '', $link = ''){                                 //function to process images uniformly
+    $img = '';                                                                          //initialize img
+    if ($url != '') {
+         
+        $isLinked = getConfig('link_item_image') && $link != '';                        //check if the img should be linked
+        $isDescribed = getConfig('show_image_desc') && $desc != '';                     //check if the img should be described
+        
+        if ($isLinked) {                                                                //open img link tag
+            $img .= '<a class="rss rss-img-link" href="' . $link . '">';                                     
+        }
+        $img .= '<figure>';                                                             //open figure tag
+        
+        //TODO add img and description, also use this function in code and add translations in mod_rss_reader.ini
+        
+        $img .= '</figure>';                                                            //closing figure tag
+        if ($isLinked) {                                                                //closing img link tag
+            $img .= '</a>';
+        }
+    }
+    
+    return $img;
+}
+function processLink(){}
+function processText() {}
+function prozessDate() {}
 
 function buildHead($rss) {
     $chImTitle = '';                                                                    //initialize variables
@@ -112,7 +137,12 @@ function buildItems($rss) {
         $itemTitle = '';                                                                //initialize content variables
         $itemLink = '';
         $itemDescription = '';
-        $itemImageUrl = '';
+        $itemImage = '';
+        $itemAuthor = '';
+        $itemCategories = '';
+        $itemCommentsUrl = '';
+        $itemDate = '';
+        $itemSource = '';
         
         if (getConfig('show_item_title')&&isset($item->title)) {                        //prepare item title
             $itemTitle = '<h3>'.$item->title.'</h3>';
@@ -124,20 +154,64 @@ function buildItems($rss) {
             $itemDescription = '<p>' . $item->description . '</p>';
         }
         if (getConfig('show_item_image')){                                              //prepare item image
+            $itemImageUrl = '';
+            
             if (isset($item->enclosure)) {
                 $itemImageUrl = (string) $item->enclosure['url'];
-            }elseif (isset($item->children('media', true)->content->attributes()->url)) { 
+            }elseif (isset($item->children('media', true)->content->attributes()->url)){//support for media tag 
                 $itemImageUrl = $item->children('media', true)->content->attributes()->url;
             }
+            if ($itemImageUrl != '') {
+                $itemImage = '<img src="' . $itemImageUrl . '" alt="Item Image"/>';
+            }
+        }
+        if (getConfig('show_item_author')) {                                            //prepare item author
+            $itemAuthorMail = '';
+            $itemAuthorName = '';
+            
+            if (isset($item->author)) {
+                $itemAuthorMail = (string) $item->author;
+            };
+            if (isset($item->children('dc', true)->creator)){                           //support dc tag
+                $itemAuthorName = $item->children('dc', true)->creator;
+            }
+            
+            $itemAuthor = '<div>'. $itemAuthorName . $itemAuthorMail .'</div>';
+        }
+        if (getConfig('show_item_category')&&isset($item->category)) {                  //prepare item categories
+            $itemCategories .= '<ul>';
+            
+            foreach ($item->category as $category){                                     //add a new category entry in each loop
+                $categoryUrl = '';
+                $categoryName = $category;
+                
+                if (isset($category['domain'])){
+                    $categoryUrl = $category['domain'];
+                }
+                $itemCategories .= '<li><a href="' . $categoryUrl . '">' . $categoryName . '</a></li>';
+            }
+            $itemCategories .= '</ul>';
+        }
+        if (getConfig('show_item_comments_link')&&isset($item->comments)) {             //prepare item comments button
+            $itemCommentsUrl = '<a href="' . $item->comments . '">comments</a>';
+        }
+        if (getConfig('show_item_date')&&isset($item->pubDate)){
+            $itemDate = '<p>' . $item->pubDate . '</p>';
+        }
+        if (getConfig('show_item_source')&&isset($item->source)) {
+            $itemSource = '<a href="' . $item->source . '">source</a>';
         }
         
         echo '<div class="rss-item">';
         echo $itemTitle;
         echo '<a href="' . $itemLink . '">Link</a>';
         echo $itemDescription;
-        echo '<img src="' . $itemImageUrl . '" alt="Item Image"/>';
+        echo $itemImage;
+        echo $itemAuthor;
+        echo $itemCategories;
+        echo $itemDate;
+        echo $itemSource;
         echo '</div>';
-        
         
         $itemCounter++;
         if ($itemCounter == $itemTarget && getConfig('item_count') != 0) {

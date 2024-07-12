@@ -6,15 +6,16 @@
     <authorUrl>https://oxfatech.de</authorUrl>
     <version>1.0.0</version>
     <creationDate>30.06.2024</creationDate>
-    <license>Proprietary</license>
+    <license>Proprietary; see LICENCE.txt</license>
     <copyright>Copyright (c) 2024 OxFaTech</copyright>
     <description>MOD_RSS_READER_XML_DESCRIPTION</description>
     <files>
-        <filename module="mod_rss_reader">mod_rss_reader.php</filename>
+        <filename module="MOD_RSS_READER">mod_rss_reader.php</filename>
         <folder>tmpl</folder>
         <folder>language</folder>
         <folder>config</folder>
         <filename>LICENSE.txt</filename>
+        <filename>mod_rss_reader.xml</filename>
     </files>
     <languages>
         <language tag="en-GB">language/en-GB/mod_rss_reader.ini</language>
@@ -40,6 +41,42 @@
                     label="MOD_RSS_READER_FIELD_DEBUG_LABEL"
                     layout="joomla.form.field.radio.switcher"
                     default="0"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+
+                <field
+                    name="show_image"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_SHOW_IMAGE_LABEL"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+
+                <field
+                    name="link_image"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_LINK_IMAGE_LABEL"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                
+                <field
+                    name="show_image_desc"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_SHOW_IMAGE_DESC_LABEL"
+                    default="1"
                     filter="integer"
                     >
                     <option value="0">JHIDE</option>
@@ -80,18 +117,6 @@
                     type="radio"
                     layout="joomla.form.field.radio.switcher"
                     label="MOD_RSS_READER_FIELD_SHOW_FEED_TITLE_LABEL"
-                    default="1"
-                    filter="integer"
-                    >
-                    <option value="0">JHIDE</option>
-                    <option value="1">JSHOW</option>
-                </field>
-
-                <field
-                    name="show_feed_image"
-                    type="radio"
-                    layout="joomla.form.field.radio.switcher"
-                    label="MOD_RSS_READER_FIELD_SHOW_FEED_IMAGE_LABEL"
                     default="1"
                     filter="integer"
                     >
@@ -235,58 +260,10 @@
                 </field>
 
                 <field
-                    name="show_item_image"
-                    type="radio"
-                    layout="joomla.form.field.radio.switcher"
-                    label="MOD_RSS_READER_FIELD_SHOW_ITEM_IMAGE_LABEL"
-                    default="1"
-                    filter="integer"
-                    >
-                    <option value="0">JHIDE</option>
-                    <option value="1">JSHOW</option>
-                </field>
-                
-                <field
-                    name="show_item_image_desc"
-                    type="radio"
-                    layout="joomla.form.field.radio.switcher"
-                    label="MOD_RSS_READER_FIELD_SHOW_ITEM_IMAGE_DESC_LABEL"
-                    default="1"
-                    filter="integer"
-                    >
-                    <option value="0">JHIDE</option>
-                    <option value="1">JSHOW</option>
-                </field>
-                
-                <field
-                    name="link_item_image"
-                    type="radio"
-                    layout="joomla.form.field.radio.switcher"
-                    label="MOD_RSS_READER_FIELD_LINK_ITEM_IMAGE_LABEL"
-                    default="1"
-                    filter="integer"
-                    >
-                    <option value="0">JHIDE</option>
-                    <option value="1">JSHOW</option>
-                </field>
-
-                <field
                     name="show_item_description"
                     type="radio"
                     layout="joomla.form.field.radio.switcher"
                     label="MOD_RSS_READER_FIELD_SHOW_ITEM_DESCRIPTION_LABEL"
-                    default="1"
-                    filter="integer"
-                    >
-                    <option value="0">JHIDE</option>
-                    <option value="1">JSHOW</option>
-                </field>
-
-                <field
-                    name="show_item_comments_link"
-                    type="radio"
-                    layout="joomla.form.field.radio.switcher"
-                    label="MOD_RSS_READER_FIELD_SHOW_ITEM_COMMENTS_LINK"
                     default="1"
                     filter="integer"
                     >
@@ -316,9 +293,9 @@
                 </field>
                 
                 <field
-                    name="show_item_author"
+                    name="show_item_category"
                     type="radio"
-                    label="MOD_RSS_READER_FIELD_SHOW_ITEM_AUTHOR_LABEL"
+                    label="MOD_RSS_READER_FIELD_SHOW_ITEM_CATEGORY_LABEL"
                     layout="joomla.form.field.radio.switcher"
                     default="1"
                     filter="integer"
@@ -328,9 +305,9 @@
                 </field>
                 
                 <field
-                    name="show_item_category"
+                    name="show_item_author"
                     type="radio"
-                    label="MOD_RSS_READER_FIELD_SHOW_ITEM_CATEGORY_LABEL"
+                    label="MOD_RSS_READER_FIELD_SHOW_ITEM_AUTHOR_LABEL"
                     layout="joomla.form.field.radio.switcher"
                     default="1"
                     filter="integer"
@@ -344,6 +321,18 @@
                     type="radio"
                     label="MOD_RSS_READER_FIELD_SHOW_ITEM_SOURCE_LABEL"
                     layout="joomla.form.field.radio.switcher"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+                
+                <field
+                    name="show_item_comments_link"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_SHOW_ITEM_COMMENTS_LINK"
                     default="1"
                     filter="integer"
                     >

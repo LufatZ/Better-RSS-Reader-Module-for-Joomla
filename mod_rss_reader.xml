@@ -124,6 +124,16 @@
                     <option value="1">JSHOW</option>
                 </field>
                 
+                <field name="feed_title_tag" type="list" default="" required="true" label="MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_LABEL" description="">
+					<option value="">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_SELECT</option>
+					<option value="h1">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_OPTION0</option>
+					<option value="h2">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_OPTION1</option>
+					<option value="h3">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_OPTION2</option>
+					<option value="h4">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_OPTION3</option>
+					<option value="h5">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_OPTION4</option>
+					<option value="h6">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_OPTION5</option>
+				</field>
+                
                 <field
                     name="show_feed_description"
                     type="radio"
@@ -258,6 +268,16 @@
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
                 </field>
+                
+                <field name="item_title_tag" type="list" default="" required="true" label="MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_LABEL" description="">
+					<option value="">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_SELECT</option>
+					<option value="h1">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_OPTION0</option>
+					<option value="h2">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_OPTION1</option>
+					<option value="h3">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_OPTION2</option>
+					<option value="h4">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_OPTION3</option>
+					<option value="h5">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_OPTION4</option>
+					<option value="h6">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_OPTION5</option>
+				</field>
 
                 <field
                     name="show_item_description"
@@ -272,13 +292,24 @@
                 </field>
                 
                 <field
-                    name="word_count"
+                    name="item_desc_word_count"
                     type="number"
                     label="MOD_RSS_READER_FIELD_WORD_COUNT_LABEL"
                     description="MOD_RSS_READER_FIELD_WORD_COUNT_DESC"
                     default="0"
-                    filter="integer"
                 />
+                
+				<field
+                    name="show_item_content_encoded"
+                    type="radio"
+                    label="MOD_RSS_READER_FIELD_SHOW_ITEM_CONTENT_ENCODED"
+                    layout="joomla.form.field.radio.switcher"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
 
                 <field
                     name="show_item_date"

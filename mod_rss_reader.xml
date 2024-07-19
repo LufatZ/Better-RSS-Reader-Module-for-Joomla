@@ -394,22 +394,22 @@
 					>
 					<form>
 						<field
-							name="tag_name"
+							name="additional_field_tag_name"
 							type="text"
 							label="MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_TAG"
-							default="&lt;example&gt;"
+							default="tagname"
 						/>
-						<field name="tag_option" type="list" default="" required="true" label="MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION_LABEL" description="">
+						<field name="additional_field_tag_option" type="list" default="" required="true" label="MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION_LABEL" description="">
 							<option value="">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_SELECT</option>
 							<option value="0">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION0</option>
 							<option value="1">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION1</option>
-							<option value="1">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION2</option>
-							<option value="1">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION3</option>
-							<option value="1">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION4</option>
-							<option value="1">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION5</option>
-							<option value="1">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION6</option>
-							<option value="1">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION7</option>
-							<option value="1">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION8</option>
+							<option value="2">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION2</option>
+							<option value="3">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION3</option>
+							<option value="4">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION4</option>
+							<option value="5">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION5</option>
+							<option value="6">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION6</option>
+							<option value="7">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION7</option>
+							<option value="8">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION8</option>
 						</field>
 					</form>
 				</field>

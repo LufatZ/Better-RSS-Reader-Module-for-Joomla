@@ -18,7 +18,7 @@ defined('_JEXEC') or die;
 
 $GLOBALS['params'] = $params;
 if (getConfig('debug')) {
-    error_log(print_r($params, true));                                                  //DEBUG: display params
+    processText(text:var_dump($params, true),tag:'div');                                                             //DEBUG: display params
 }
 $rssUrl = getConfig('rssurl');                                                          //load rss url
 $rss = simplexml_load_file($rssUrl, 'SimpleXMLElement', LIBXML_NOCDATA);                //load rss file from url with CDATA support
@@ -36,31 +36,47 @@ if ($rss) {                                                                     
 function getConfig($config) {                                                           //function to extract configs from $params
     return $GLOBALS['params']->get($config, '');
 }
-function processImg($url = '', $desc = '', $link = '', $alt = ''){                      //function to process images uniformly
-    $img = '';                                                                          //initialize img
+function processImg($url = '', $desc = '', $link = '', $alt = '') {                     // function to process images uniformly
+    $img = '';                                                                          // initialize img
     if ($url != '') {
-         
-        $isLinked = getConfig('link_image') && $link != '';                             //check if the img should be linked
-        $isDescribed = getConfig('show_image_desc') && $desc != '';                     //check if the img should be described
         
-        if ($isLinked) {                                                                //open img link tag
-            $img .= '<a class="rss rss-img-link" href="' . $link . '">';                                     
-        }
-        $img .= '<figure>';                                                             //open figure tag
+        $isLinked = getConfig('link_image') && $link != '';                             // check if the img should be linked
+        $isDescribed = getConfig('show_image_desc') && $desc != '';                     // check if the img should be described
+        
+        $figure = '<figure>';                                                           // open figure tag
         if (getConfig('show_image')) {
-            $img .= '<img class="rss rss-img" src="' . $url . '" alt="'. $alt .'"/>';   //insert image
+            $figure .= '<img class="rss rss-img" src="' . $url . '" alt="'. $alt .'"/>';// insert image
         }
         if ($isDescribed) {
-            $img .= prozessText(tag:'figcaption', text: $desc);                           //insert image description
+            $figure .= processText(tag: 'figcaption', text: $desc);                     // insert image description
         }
-        $img .= '</figure>';                                                            //closing figure tag
-        if ($isLinked) {                                                                //closing img link tag
-            $img .= '</a>';
+        $figure .= '</figure>';                                                         // close figure tag
+        
+        if ($isLinked) {                                                                // wrap with link if needed
+            $img = processLink(link:$link, text:$figure, class:'rss rss-img-link');
+        } else {
+            $img = $figure;
         }
     }
     
     return $img;
 }
+function calculateSimilarity($text1, $text2) {                                          //Function for comparing the HTML output (percentage)
+    $text1 = strip_tags($text1);                                                        //remove html tags
+    $text2 = strip_tags($text2);
+    
+    $words1 = preg_split('/\s+/', $text1);                                               
+    $words2 = preg_split('/\s+/', $text2);
+    
+    $commonWords = array_intersect($words1, $words2);
+    
+    $totalWords = count($words1) + count($words2);
+    
+    $similarity = (2 * count($commonWords)) / $totalWords * 100;
+    
+    return $similarity;
+}
+
 function limitWords($text = '', $limit = 0) {
     if ($limit <= 0) {
         return $text;
@@ -76,9 +92,19 @@ function limitWords($text = '', $limit = 0) {
     $limitedText = implode(' ', array_slice($words, 0, $limit));
     return processText(text: $limitedText . '...');
 }
-function processLink(){}
-function processText($text = '', $class = '', $tag = 'p') {
-    return '<' . $tag . ' class="rss rss-text '. $class .'">' . $text . '</' . $tag . '>';
+
+function processLink($link = '#', $text = '', $class = '') {
+    if ($link=='') {
+        return $text;
+    }
+    return '<a href="' . $link . '" class="' . $class . '">' . $text . '</a>';
+}
+
+function processText($tag = 'p', $text = '', $class = '') {
+    if ($text == '') {
+        return '';
+    }
+    return '<' . $tag . ' class="' . $class . '">' . $text . '</' . $tag . '>';
 }
 function processDate($date) {
     return (new DateTime($date))->format('d.m.Y H:i');
@@ -162,12 +188,13 @@ function buildItems($rss) {
         $itemSource = '';
         $readMore = '';
         $itemEncoded = '';
+        $additionalFields = '';
         
-        if (getConfig('show_item_title')&&isset($item->title)) {                        //prepare item title
-            $itemTitle = processText(text:$item->title,tag:getConfig('item_title_tag'));
-        }
         if (isset($item->link)){                                                        //prepare item link
             $itemLink = (string) $item->link;
+        }
+        if (getConfig('show_item_title')&&isset($item->title)) {                        //prepare item title
+            $itemTitle = processLink(link:$itemLink,text:processText(text:$item->title,tag:getConfig('item_title_tag')));
         }
         if (getConfig('show_item_description')&&isset($item->description)) {            //prepare item description
             $itemDescription = limitWords(limit: intval(getConfig('item_desc_word_count')),text: $item->description);
@@ -212,32 +239,82 @@ function buildItems($rss) {
                 
                 if (isset($category['domain'])){
                     $categoryUrl = $category['domain'];
-                }
-                $itemCategories .= processText(text:'<a href="' . $categoryUrl . '">' . $categoryName . '</a>', tag:'li') ;
+                }                                                                       
+                $itemCategories .= processText(text:processLink(link:$categoryUrl,text:$categoryName),tag:'li');
             }
             $itemCategories .= '</ul>';
         }
         if (getConfig('show_item_comments_link')&&isset($item->comments)) {             //prepare link to item comments
-            $itemCommentsUrl = '<a href="' . $item->comments . '">comments</a>';
+            $itemCommentsUrl = processLink(link:$item->comments, text:'comments');
         }
         if (getConfig('show_item_date')&&isset($item->pubDate)){                        //prepare item date
             $itemDate = processText(text: processDate($item->pubDate));
         }
         if (getConfig('show_item_source')&&isset($item->source)) {                      //prepare link to item source rss file
-            $itemSource = '<a href="' . $item->source . '">source</a>';
+            $itemSource = processLink(link: $item->source, text:'source');
         }
         if ($itemLink != ''){                                                           //prepare link to item
-            $readMore = '<a href="'. $itemLink . '">read more</a>';
+            $readMore = processLink(link: $itemLink,text:'read more');
+        }
+        if ($FieldsConfig = getConfig('item_additional_fields')) {//TODO: Namespaces
+            foreach ($FieldsConfig as $field) {
+                $tagName = $field->additional_field_tag_name;
+                $tagOption = $field->additional_field_tag_option;
+                
+                switch ($tagOption){
+                    case 0: 
+                        $additionalFields.= processText(text:$item->$tagName,tag:'h1');
+                        break;
+                    case 1:
+                        $additionalFields.= processText(text:$item->$tagName,tag:'h2');
+                        break;
+                    case 2:
+                        $additionalFields.= processText(text:$item->$tagName,tag:'h3');
+                        break;
+                    case 3:
+                        $additionalFields.= processText(text:$item->$tagName,tag:'h4');
+                        break;
+                    case 4:
+                        $additionalFields.= processText(text:$item->$tagName,tag:'h5');
+                        break;
+                    case 5:
+                        $additionalFields.= processText(text:$item->$tagName,tag:'h6');
+                        break;
+                    case 6:
+                        $additionalFields.= processText(text: $item->$tagName);
+                        break;
+                    case 7:
+                        $additionalFieldsImg = '';
+                        if ($item->$tagName != '') {
+                            $additionalFieldsImg = $item->$tagName;
+                        }
+                        elseif ($item->$tagName['url'] != '') {
+                            $additionalFieldsImg = $item->$tagName['url'];
+                        }
+                        $additionalFields.= processImg(url:$additionalFieldsImg);
+                        break;
+                    case 8: //TODO: Custom link text
+                        $additionalFields.= processLink(link:$item->$tagName,text:$item->$tagName);
+                        break;
+                    default: break;
+                }
+            }
         }
         
-        //TODO implement additional fields
         
+        //TODO implement additional fields
         echo '<div class="rss rss-item" id="rss-item-' . $itemCounter . '">';
         echo $itemTitle;
         echo $itemDate;
-        echo $itemDescription;
-        echo $itemEncoded;
-        echo $itemImage;
+        if (calculateSimilarity($itemEncoded, $itemImage.$itemDescription)<70) {
+            echo $itemEncoded;
+            echo $itemDescription;
+            echo $itemImage;
+        }else {
+            echo $itemDescription;
+            echo $itemImage;
+        }
+        echo $additionalFields;
         echo $itemCategories;
         echo '<div class="rss rss-item-footer">';
         echo $itemAuthor;

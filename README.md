@@ -1,5 +1,5 @@
-# Better-RSS-Reader-Module-for-Joomla
-
+![Designer](https://github.com/user-attachments/assets/ff869018-ad5e-43db-aeca-4b1f29308f4a)
+# [BRSSR] Better-RSS-Reader-Module-for-Joomla
  This is a module for Joomla that adds a new and improved RSS reader to your Joomla website.
 
 ![image](https://github.com/LufatZ/Better-RSS-Reader-Module-for-Joomla/assets/86516373/944fb06b-b42b-4265-8589-d09220285917)

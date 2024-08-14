@@ -5,14 +5,14 @@
 ![image](https://github.com/LufatZ/Better-RSS-Reader-Module-for-Joomla/assets/86516373/944fb06b-b42b-4265-8589-d09220285917)
 
 
-## License
- This software is licensed under a proprietary license. Any distribution, modification, or commercial use is prohibited without prior express written permission from the copyright holder. For details, see the [LICENSE.txt file](./LICENSE.txt).
+## Licence
+ This software is licensed under a proprietary licence. Any redistribution, modification or commercial use is prohibited without the express written consent of the copyright owner. See the file [LICENSE.txt](./LICENSE.txt) for details.
 
-## Change Proposals
- We welcome modification proposals and improvements. Please submit your proposals via pull requests. The copyright holder reserves the right to incorporate these changes at its sole discretion.
+## Suggestions for changes
+ We welcome suggestions for changes and improvements. Please submit your suggestions via pull requests. The copyright holder reserves the right to incorporate these changes at their discretion.
 
 ## Support
- Support the development of this project through donations. [Link to donation platform]
+ Support the development of this project by making a donation. [Buy me a coffee](https://www.paypal.com/donate/?hosted_button_id=DX93QEVJU725U)
 
 ## Contact
- For more information or inquiries about the use of this software, please contact support@oxfatech.de.
+ For more information or questions about using this software, please contact support@oxfatech.de.

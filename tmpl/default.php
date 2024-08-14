@@ -2,57 +2,97 @@
 
 /**
  * Better RSS Reader
- * 
+ *
  * @package MOD_RSS_READER
+ * @version 1.0.0
  * @author Lucas Damme lufatz@oxfatech.de
  * @license Proprietary Licence
  * @copyright (c) 2024 OxFaTech
  * @link https://oxfatech.de
- * 
- * This software is licensed under a proprietary license.
- * Any distribution, modification, or commercial use is prohibited without prior express written permission from the copyright holder.
- * For details, see the LICENSE.txt file.
+ *
+ * This module fetches and displays RSS feeds with customizable options.
+ * The software is licensed under a proprietary license. Redistribution,
+ * modification, or commercial use is prohibited without prior express
+ * written permission from the copyright holder.
+ * For details, see the LICENCE.txt file
  */
 
-defined('_JEXEC') or die;
+defined('_JEXEC') or die(); // Ensure the file is accessed from Joomla
 
+// Store global parameters
 $GLOBALS['params'] = $params;
+// Debugging: Output parameters if debug mode is enabled
 if (getConfig('debug')) {
-    processText(text:var_dump($params, true),tag:'div');                                                             //DEBUG: display params
+    processText(text:var_dump($params, true),tag:'div');
 }
-$rssUrl = getConfig('rssurl');                                                          //load rss url
-$rss = simplexml_load_file($rssUrl, 'SimpleXMLElement', LIBXML_NOCDATA);                //load rss file from url with CDATA support
-if ($rss) {                                                                             //check if rss is loaded successfully
-    echo '<div class="rss rss-feed">';                                                  //open tag for rss html output
+// Fetch the RSS URL from the module configuration
+$rssUrl = getConfig('rssurl');
+// Attempt to load the RSS feed from the specified URL
+$rss = simplexml_load_file($rssUrl, 'SimpleXMLElement', LIBXML_NOCDATA);
+// Check if the RSS feed was successfully loaded
+if ($rss) {
+    echo '<div class="rss rss-feed">';
+    // Display the channel (feed) information if enabled
     if (getConfig('show_feed_channel')) {
-        buildHead($rss);                                                                //function to build and echo channel head
-    }                                                            
-        buildItems($rss);                                                               //function to build and echo rss items
-    echo '</div>';                                                                      //close tag for rss html output
+        buildHead($rss);
+    }
+    // Display the individual feed items
+        buildItems($rss);
+    echo '</div>';
 } else {
-    echo processText(text: 'Failed to load RSS feed');
+    // Display an error message if the RSS feed could not be loaded
+    echo '<p>Error: Failed to load RSS feed.</p>';
 }
 
-function getConfig($config) {                                                           //function to extract configs from $params
+/**
+
+* Fetch a configuration value from the global parameters
+
+*
+
+* @param string $config The name of the configuration parameter
+
+* @return mixed The value of the configuration parameter, or an empty string if not set
+
+*/
+function getConfig($config) {
     return $GLOBALS['params']->get($config, '');
 }
-function processImg($url = '', $desc = '', $link = '', $alt = '') {                     // function to process images uniformly
-    $img = '';                                                                          // initialize img
+
+/**
+
+* Process and return an image HTML element with optional linking and description
+
+*
+
+* @param string $url The URL of the image
+
+* @param string $desc A description for the image (optional)
+
+* @param string $link A URL to wrap the image with a hyperlink (optional)
+
+* @param string $alt Alt text for the image (optional)
+
+* @return string The processed image HTML element
+
+*/
+function processImg($url = '', $desc = '', $link = '', $alt = '') {
+    $img = '';
     if ($url != '') {
-        
-        $isLinked = getConfig('link_image') && $link != '';                             // check if the img should be linked
-        $isDescribed = getConfig('show_image_desc') && $desc != '';                     // check if the img should be described
-        
-        $figure = '<figure>';                                                           // open figure tag
+        // Check if the image should be wrapped in a link and if a description should be included
+        $isLinked = getConfig('link_image') && $link != '';
+        $isDescribed = getConfig('show_image_desc') && $desc != '';
+        // Build the <figure> element containing the image and its description (if applicable)
+        $figure = '<figure>';
         if (getConfig('show_image')) {
-            $figure .= '<img class="rss rss-img" src="' . $url . '" alt="'. $alt .'"/>';// insert image
+            $figure .= '<img class="rss rss-img" src="' . $url . '" alt="'. $alt .'"/>';
         }
         if ($isDescribed) {
-            $figure .= processText(tag: 'figcaption', text: $desc);                     // insert image description
+            $figure .= processText(tag: 'figcaption', text: $desc);
         }
-        $figure .= '</figure>';                                                         // close figure tag
-        
-        if ($isLinked) {                                                                // wrap with link if needed
+        $figure .= '</figure>';
+        // If linking is enabled, wrap the figure in a hyperlink
+        if ($isLinked) {
             $img = processLink(link:$link, text:$figure, class:'rss rss-img-link');
         } else {
             $img = $figure;
@@ -61,57 +101,125 @@ function processImg($url = '', $desc = '', $link = '', $alt = '') {             
     
     return $img;
 }
-function calculateSimilarity($text1, $text2) {                                          //Function for comparing the HTML output (percentage)
-    $text1 = strip_tags($text1);                                                        //remove html tags
-    $text2 = strip_tags($text2);
-    
-    $words1 = preg_split('/\s+/', $text1);                                               
-    $words2 = preg_split('/\s+/', $text2);
-    
+
+/**
+
+* Calculate the similarity between two texts as a percentage.
+
+* This is used for detecting and avoiding duplicate or near-duplicate content.
+
+*
+
+* @param string $text1 The first text string
+
+* @param string $text2 The second text string
+
+* @return float The similarity percentage between the two texts
+
+*/
+function calculateSimilarity($text1, $text2) {
+    // Remove HTML tags and split the text into words
+    $words1 = preg_split('/\s+/', strip_tags($text1));    
+    $words2 = preg_split('/\s+/', strip_tags($text2));
+    // Find common words between the two texts
     $commonWords = array_intersect($words1, $words2);
-    
+    // Calculate the total word count
     $totalWords = count($words1) + count($words2);
     
-    $similarity = (2 * count($commonWords)) / $totalWords * 100;
-    
-    return $similarity;
+    // Calculate and return the similarity as a percentage
+    return (2 * count($commonWords)) / $totalWords * 100;
 }
 
+/**
+
+* Limit the number of words in a text string, appending an ellipsis if truncated.
+
+*
+
+* @param string $text The text to limit
+
+* @param int $limit The maximum number of words allowed
+
+* @return string The truncated text, with an ellipsis if necessary
+
+*/
 function limitWords($text = '', $limit = 0) {
     if ($limit <= 0) {
         return $text;
     }
+    // Remove HTML tags and split the text into words
+    $words = preg_split('/\s+/', strip_tags($text));
     
-    $text = strip_tags($text);
-    $words = preg_split('/\s+/', $text);
-    
-    if (count($words) <= $limit) {
-        return $text;
+    // If the text exceeds the word limit, truncate and append an ellipsis
+    if (count($words) > $limit) {
+        $text = implode(' ', array_slice($words, 0, $limit)) . '...';
     }
-    
-    $limitedText = implode(' ', array_slice($words, 0, $limit));
-    return processText(text: $limitedText . '...');
+    return $text;
 }
 
+/**
+
+* Create an HTML hyperlink element
+
+*
+
+* @param string $link The URL for the hyperlink
+
+* @param string $text The text to display for the hyperlink
+
+* @param string $class CSS classes to apply to the hyperlink (optional)
+
+* @return string The generated hyperlink HTML element
+
+*/
 function processLink($link = '#', $text = '', $class = '') {
-    if ($link=='') {
-        return $text;
-    }
-    return '<a href="' . $link . '" class="' . $class . '">' . $text . '</a>';
+    return $link ? '<a href="' . $link . '" class="' . $class . '">' . $text . '</a>' : $text;
 }
 
-function processText($tag = 'p', $text = '', $class = '') {
-    if ($text == '') {
-        return '';
-    }
-    return '<' . $tag . ' class="' . $class . '">' . $text . '</' . $tag . '>';
+/**
+
+* Wrap text in an HTML tag with an optional CSS class
+
+*
+
+* @param string $tag The HTML tag to wrap the text in
+
+* @param string $text The text to wrap
+
+* @param string $class CSS classes to apply to the tag (optional)
+
+* @return string The generated HTML element with the wrapped text
+
+*/
+function processText($tag = 'p', $text = '', $class = '') {   
+    return $text ? '<' . $tag . ' class="' . $class . '">' . $text . '</' . $tag . '>' : '';
 }
+/**
+
+* Format a date string in 'd.m.Y H:i' format.
+
+*
+
+* @param string $date The date string to format
+
+* @return string The formatted date
+
+*/
 function processDate($date) {
     return (new DateTime($date))->format('d.m.Y H:i');
 }
+/**
 
+* Build and display the RSS feed channel header, including title, description, and image.
+
+*
+
+* @param SimpleXMLElement $rss The loaded RSS feed
+
+*/
 function buildHead($rss) {
-    $chImTitle = '';                                                                    //initialize variables
+    //initialize content variables
+    $chImTitle = '';
     $chDescription = '';
     $chImage = '';
     $chLang = '';
@@ -121,46 +229,54 @@ function buildHead($rss) {
     $chPubDate = '';
     $chCategory = '';
     $chGenerator = '';
-       
-    if (getConfig('show_feed_title') && isset($rss->channel->title)) {                  //get config and prepare channel title
+    
+    // Prepare the channel title
+    if (getConfig('show_feed_title') && isset($rss->channel->title)) {
         $chTitle = processText(text:$rss->channel->title,tag:getConfig('feed_title_tag'));
     }
-    if (getConfig('show_feed_description') && isset($rss->channel->description)) {      //get config and prepare channel description
+    // Prepare the channel description
+    if (getConfig('show_feed_description') && isset($rss->channel->description)) {
         $chDescription = '<div class="rss rss-description-container">' . processText(text: $rss->channel->description) . '</div>'; 
     }
-    if (getConfig('show_image') && isset($rss->channel->image)) {                       //get cofig and prepare channel image                                   
+    // Prepare the channel image
+    if (getConfig('show_image') && isset($rss->channel->image)) {                                   
         $chImUrl = $rss->channel->image->url;
-        $chImTitle = $rss->channel->image->title;
-        $chImLink = $rss->channel->image->link;
-        $chImDescription = $rss->channel->image->description;
-        
-        $chImage = processImg(url: $chImUrl, desc: $chImDescription, link: $chImLink, alt: $chImTitle);
+        $chImage = processImg(
+            $rss->channel->image->url,
+            $rss->channel->image->description,
+            $rss->channel->image->link,
+            $rss->channel->image->title
+        );
     }
-    
-    if (getConfig('show_feed_language')&&isset($rss->channel->language)) {              //get cofig and prepare channel language
+    // Prepare other optional channel elements (lang, date, contacts, ...)
+    if (getConfig('show_feed_language')&&isset($rss->channel->language)) {
         $chLang = processText(text: $rss->channel->language);
     }
-    if (getConfig('show_feed_copyright')&&isset($rss->channel->copyright)) {            //get cofig and prepare channel copyright
+    if (getConfig('show_feed_copyright')&&isset($rss->channel->copyright)) {
         $chRights = processText(text: $rss->channel->copyright);
     }
-    if (getConfig('show_feed_web_master')&&isset($rss->channel->webMaster)) {           //get cofig and prepare channel web master (technical contact)
+    //(technical contact)
+    if (getConfig('show_feed_web_master')&&isset($rss->channel->webMaster)) {
         $chContactTec = processText(text:$rss->channel->webMaster);
     }
-    if (getConfig('show_feed_managing_editor')&&isset($rss->channel->managingEditor)) { //get cofig and prepare channel managing editor (content contact)
+    //(content contact)
+    if (getConfig('show_feed_managing_editor')&&isset($rss->channel->managingEditor)) {
         $chContactCon = processText(text: $rss->channel->managingEditor);
     }
-    if (getConfig('show_feed_pub_date')&&isset($rss->channel->pubDate)) {               //get cofig and prepare channel publishing date
+    if (getConfig('show_feed_pub_date')&&isset($rss->channel->pubDate)) {
         $chPubDate = processText(text: processDate($rss->channel->pubDate));
     }
-    if (getConfig('show_feed_category')&&isset($rss->channel->category)) {              //get cofig and prepare channel category
+    if (getConfig('show_feed_category')&&isset($rss->channel->category)) {
         $chCategory = processText(text: $rss->channel->category);
     }
-    if (getConfig('show_feed_generator')&&isset($rss->channel->generator)) {            //get cofig and prepare feed generator (e.g. OxFaTech Feed Generator v1.0)
+    //(e.g. OxFaTech Feed Generator v1.0)
+    if (getConfig('show_feed_generator')&&isset($rss->channel->generator)) {
         $chGenerator = processText(text: $rss->channel->generator);
     }
-        
-    echo '<div class="rss rss-reader rss-channel rss-head" id="rss-head">';             //open head container
-    echo $chImage;                                                                      //insert content
+    
+    // Output the channel header
+    echo '<div class="rss rss-reader rss-channel rss-head" id="rss-head">'; 
+    echo $chImage;
     echo $chTitle;
     echo $chLang;
     echo $chRights;
@@ -170,14 +286,27 @@ function buildHead($rss) {
     echo $chPubDate;
     echo $chCategory;
     echo $chGenerator;
-    echo '</div>';                                                                      //close head container
+    echo '</div>';
 }
-function buildItems($rss) {                                                             
-    $itemCounter=0;                                                                     //initialize counter variable to limit items
-    $itemTarget= getConfig('item_count');                                               //initialize max items variable
+
+/**
+
+* Build and display the RSS feed items, including title, description, and other optional elements.
+
+*
+
+* @param SimpleXMLElement $rss The loaded RSS feed
+
+*/
+function buildItems($rss) {
+    // Initialize item counter and limit
+    $itemCounter=0;
+    $itemTarget= getConfig('item_count');
     
-    foreach ($rss->channel->item as $item) {                                            //loop trough each item of the rss feed
-        $itemTitle = '';                                                                //initialize content variables
+    // Loop through each item in the RSS feed
+    foreach ($rss->channel->item as $item) {
+        // Initialize item elements
+        $itemTitle = '';                                                                
         $itemLink = '';
         $itemDescription = '';
         $itemImage = '';
@@ -190,26 +319,34 @@ function buildItems($rss) {
         $itemEncoded = '';
         $additionalFields = '';
         
-        if (isset($item->link)){                                                        //prepare item link
+        //prepare item link
+        if (isset($item->link)){                                                        
             $itemLink = (string) $item->link;
         }
-        if (getConfig('show_item_title')&&isset($item->title)) {                        //prepare item title
+        // Prepare item title
+        if (getConfig('show_item_title')&&isset($item->title)) {
             $itemTitle = processLink(link:$itemLink,text:processText(text:$item->title,tag:getConfig('item_title_tag')));
         }
-        if (getConfig('show_item_description')&&isset($item->description)) {            //prepare item description
+        //prepare item description
+        if (getConfig('show_item_description')&&isset($item->description)) {            
             $itemDescription = limitWords(limit: intval(getConfig('item_desc_word_count')),text: $item->description);
         }
-        if (getConfig('show_item_content_encoded')&&isset($item->children('content', true)->encoded)) { //prepare item content:encoded
+        //prepare item content:encoded
+        if (getConfig('show_item_content_encoded')&&isset($item->children('content', true)->encoded)) { 
             $itemEncoded = $item->children('content', true)->encoded;
         }
-        if (getConfig('show_image')){                                                   //prepare item image
-            $itemImageUrl = '';                                                         //initialize variables
+        //prepare item image
+        if (getConfig('show_image')){        
+            //initialize img variables
+            $itemImageUrl = '';                                                         
             $itemImageAlt = '';
             $itemImageDesc = '';
             
             if (isset($item->enclosure)) {
                 $itemImageUrl = (string) $item->enclosure['url'];
-            }elseif (isset($item->children('media', true)->content->attributes()->url)){//support for media tag 
+            }
+            //support for media tag
+            elseif (isset($item->children('media', true)->content->attributes()->url)){ 
                 $itemImageUrl = $item->children('media', true)->content->attributes()->url;
                 $itemImageAlt = $item->children('media', true)->credit;
                 $itemImageDesc = $item->children('media',true)->description;
@@ -217,23 +354,26 @@ function buildItems($rss) {
             
             $itemImage = processImg(url: $itemImageUrl, link: $itemLink, alt: $itemImageAlt, desc: $itemImageDesc);
         }
-        if (getConfig('show_item_author')) {                                            //prepare item author
+        //prepare item author
+        if (getConfig('show_item_author')) {                                            
             $itemAuthorMail = '';
             $itemAuthorName = '';
             
             if (isset($item->author)) {
                 $itemAuthorMail = (string) $item->author;
             };
-            if (isset($item->children('dc', true)->creator)){                           //support dc tag
+            //support dc tag
+            if (isset($item->children('dc', true)->creator)){                           
                 $itemAuthorName = $item->children('dc', true)->creator;
             }
             
             $itemAuthor = processText(text: $itemAuthorName . $itemAuthorMail, tag:'div');
         }
-        if (getConfig('show_item_category')&&isset($item->category)) {                  //prepare item categories
+        //prepare item categories
+        if (getConfig('show_item_category')&&isset($item->category)) {                  
             $itemCategories .= '<ul>';
-            
-            foreach ($item->category as $category){                                     //add a new category entry in each loop
+            //add a new category entry in each loop
+            foreach ($item->category as $category){                                     
                 $categoryUrl = '';
                 $categoryName = $category;
                 
@@ -244,19 +384,24 @@ function buildItems($rss) {
             }
             $itemCategories .= '</ul>';
         }
-        if (getConfig('show_item_comments_link')&&isset($item->comments)) {             //prepare link to item comments
+        //prepare link to item comments
+        if (getConfig('show_item_comments_link')&&isset($item->comments)) {             
             $itemCommentsUrl = processLink(link:$item->comments, text:'comments');
         }
-        if (getConfig('show_item_date')&&isset($item->pubDate)){                        //prepare item date
+        //prepare item date
+        if (getConfig('show_item_date')&&isset($item->pubDate)){                        
             $itemDate = processText(text: processDate($item->pubDate));
         }
-        if (getConfig('show_item_source')&&isset($item->source)) {                      //prepare link to item source rss file
+        //prepare link to item source rss file
+        if (getConfig('show_item_source')&&isset($item->source)) {                      
             $itemSource = processLink(link: $item->source, text:'source');
         }
-        if ($itemLink != ''){                                                           //prepare link to item
+        //prepare link to item
+        if ($itemLink != ''){                                                           
             $readMore = processLink(link: $itemLink,text:'read more');
         }
-        if ($FieldsConfig = getConfig('item_additional_fields')) {//TODO: Namespaces
+        if ($FieldsConfig = getConfig('item_additional_fields')) {
+            //TODO: Namespaces
             foreach ($FieldsConfig as $field) {
                 $tagName = $field->additional_field_tag_name;
                 $tagOption = $field->additional_field_tag_option;
@@ -293,7 +438,7 @@ function buildItems($rss) {
                         }
                         $additionalFields.= processImg(url:$additionalFieldsImg);
                         break;
-                    case 8: //TODO: Custom link text
+                    case 8:
                         $additionalFieldsLinkText = $item->$tagName;
                         if ($field->additional_field_link_text != "") {
                             $additionalFieldsLinkText = $field->additional_field_link_text;
@@ -304,7 +449,7 @@ function buildItems($rss) {
                 }
             }
         }
-        
+        // Output the item elements
         echo '<div class="rss rss-item" id="rss-item-' . $itemCounter . '">';
         echo $itemTitle;
         echo $itemDate;
@@ -325,7 +470,9 @@ function buildItems($rss) {
         echo '</div>';
         echo '</div>';
         
+        // Increment the item counter
         $itemCounter++;
+        // Stop if the item limit is reached
         if ($itemCounter == $itemTarget && getConfig('item_count') != 0) {
             break;
         }

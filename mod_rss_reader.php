@@ -2,16 +2,19 @@
 
 /**
  * Better RSS Reader
- * 
+ *
  * @package MOD_RSS_READER
+ * @version 1.0.0
  * @author Lucas Damme lufatz@oxfatech.de
  * @license Proprietary Licence
  * @copyright (c) 2024 OxFaTech
  * @link https://oxfatech.de
- * 
- * This software is licensed under a proprietary license.
- * Any distribution, modification, or commercial use is prohibited without prior express written permission from the copyright holder.
- * For details, see the LICENSE.txt file.
+ *
+ * This module fetches and displays RSS feeds with customizable options.
+ * The software is licensed under a proprietary license. Redistribution,
+ * modification, or commercial use is prohibited without prior express
+ * written permission from the copyright holder.
+ * For details, see the LICENCE.txt file
  */
 
 defined('_JEXEC') or die;

@@ -12,7 +12,7 @@
  We welcome suggestions for changes and improvements. Please submit your suggestions via pull requests. The copyright holder reserves the right to incorporate these changes at their discretion.
 
 ## Support
- Support the development of this project by making a donation. [Buy me a coffee](https://www.bisecthosting.com/clients/aff.php?aff=3251)
+ Support the development of this project by making a donation. [Buy me a coffee](https://www.paypal.com/donate/?hosted_button_id=DX93QEVJU725U)
 
 ## Contact
  For more information or questions about using this software, please contact support@oxfatech.de.

@@ -66,6 +66,7 @@
                     label="MOD_RSS_READER_FIELD_LINK_IMAGE_LABEL"
                     default="1"
                     filter="integer"
+					showon="show_image:1"
                     >
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
@@ -78,6 +79,7 @@
                     label="MOD_RSS_READER_FIELD_SHOW_IMAGE_DESC_LABEL"
                     default="1"
                     filter="integer"
+					showon="show_image:1"
                     >
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
@@ -119,12 +121,20 @@
                     label="MOD_RSS_READER_FIELD_SHOW_FEED_TITLE_LABEL"
                     default="1"
                     filter="integer"
+					showon="show_feed_channel:1"
                     >
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
                 </field>
                 
-                <field name="feed_title_tag" type="list" default="" required="true" label="MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_LABEL" description="">
+                <field 
+                	name="feed_title_tag" 
+                	type="list" default="" 
+                	required="true" 
+                	label="MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_LABEL" 
+               	 	description=""
+					showon="show_feed_channel:1"
+					>
 					<option value="">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_SELECT</option>
 					<option value="h1">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_OPTION0</option>
 					<option value="h2">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_OPTION1</option>
@@ -141,6 +151,7 @@
                     label="MOD_RSS_READER_FIELD_SHOW_FEED_DESCRIPTION_LABEL"
                     default="1"
                     filter="integer"
+					showon="show_feed_channel:1"
                     >
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
@@ -153,6 +164,7 @@
                     label="MOD_RSS_READER_FIELD_SHOW_FEED_LANGUAGE_LABEL"
                     default="1"
                     filter="integer"
+					showon="show_feed_channel:1"
                     >
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
@@ -165,6 +177,7 @@
                     label="MOD_RSS_READER_FIELD_SHOW_FEED_COPYRIGHT_LABEL"
                     default="1"
                     filter="integer"
+					showon="show_feed_channel:1"
                     >
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
@@ -177,6 +190,7 @@
                     label="MOD_RSS_READER_FIELD_SHOW_FEED_MANAGING_EDITOR_LABEL"
                     default="1"
                     filter="integer"
+					showon="show_feed_channel:1"
                     >
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
@@ -189,6 +203,7 @@
                     label="MOD_RSS_READER_FIELD_SHOW_FEED_WEB_MASTER_LABEL"
                     default="1"
                     filter="integer"
+					showon="show_feed_channel:1"
                     >
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
@@ -201,6 +216,7 @@
                     label="MOD_RSS_READER_FIELD_SHOW_FEED_PUB_DATE_LABEL"
                     default="1"
                     filter="integer"
+					showon="show_feed_channel:1"
                     >
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
@@ -213,6 +229,7 @@
                     label="MOD_RSS_READER_FIELD_SHOW_FEED_CATEGORY_LABEL"
                     default="1"
                     filter="integer"
+					showon="show_feed_channel:1"
                     >
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
@@ -225,6 +242,7 @@
                     label="MOD_RSS_READER_FIELD_SHOW_FEED_GENERATOR_LABEL"
                     default="1"
                     filter="integer"
+					showon="show_feed_channel:1"
                     >
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
@@ -269,7 +287,15 @@
                     <option value="1">JSHOW</option>
                 </field>
                 
-                <field name="item_title_tag" type="list" default="" required="true" label="MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_LABEL" description="">
+                <field 
+	                name="item_title_tag" 
+	                type="list" 
+	                default="" 
+	                required="true" 
+	                label="MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_LABEL" 
+	                description=""
+					showon="show_item_title:1"
+	                >
 					<option value="">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_SELECT</option>
 					<option value="h1">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_OPTION0</option>
 					<option value="h2">MOD_RSS_READER_FIELD_ITEM_TITLE_TAG_OPTION1</option>
@@ -297,6 +323,7 @@
                     label="MOD_RSS_READER_FIELD_WORD_COUNT_LABEL"
                     description="MOD_RSS_READER_FIELD_WORD_COUNT_DESC"
                     default="0"
+					showon="show_item_description:1"
                 />
                 
 				<field
@@ -411,47 +438,16 @@
 							<option value="7">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION7</option>
 							<option value="8">MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_OPTION8</option>
 						</field>
+						<field
+							name="additional_field_link_text"
+							type="text"
+							label="MOD_RSS_READER_FIELD_ITEM_ADDITIONAL_FIELDS_LINK_TEXT"
+							showon="additional_field_tag_option:8"
+						/>
 					</form>
 				</field>
 
             </fieldset>
-			<fieldset name="advanced">
-				<field
-					name="layout"
-					type="modulelayout"
-					label="JFIELD_ALT_LAYOUT_LABEL"
-					class="form-select"
-					validate="moduleLayout"
-				/>
-
-				<field
-					name="moduleclass_sfx"
-					type="textarea"
-					label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
-					rows="3"
-					validate="CssIdentifier"
-				/>
-
-				<field
-					name="cache"
-					type="list"
-					label="COM_MODULES_FIELD_CACHING_LABEL"
-					default="1"
-					filter="integer"
-					validate="options"
-					>
-					<option value="1">JGLOBAL_USE_GLOBAL</option>
-					<option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
-				</field>
-
-				<field
-					name="cache_time"
-					type="number"
-					label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
-					default="900"
-					filter="integer"
-				/>
-			</fieldset>
 		</fields>
 	</config>
 </extension>

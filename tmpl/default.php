@@ -294,15 +294,17 @@ function buildItems($rss) {
                         $additionalFields.= processImg(url:$additionalFieldsImg);
                         break;
                     case 8: //TODO: Custom link text
-                        $additionalFields.= processLink(link:$item->$tagName,text:$item->$tagName);
+                        $additionalFieldsLinkText = $item->$tagName;
+                        if ($field->additional_field_link_text != "") {
+                            $additionalFieldsLinkText = $field->additional_field_link_text;
+                        }
+                        $additionalFields.= processLink(link:$item->$tagName,text:$additionalFieldsLinkText);
                         break;
                     default: break;
                 }
             }
         }
         
-        
-        //TODO implement additional fields
         echo '<div class="rss rss-item" id="rss-item-' . $itemCounter . '">';
         echo $itemTitle;
         echo $itemDate;

@@ -17,39 +17,70 @@
  * For details, see the LICENCE.txt file
  */
 
-defined('_JEXEC') or die(); // Ensure the file is accessed from Joomla
+// Ensure the file is accessed from Joomla
+defined('_JEXEC') or die();
 
 // Store global parameters
 $GLOBALS['params'] = $params;
 // Debugging: Output parameters if debug mode is enabled
 if (getConfig('debug')) {
     processText(text:var_dump($params, true),tag:'div');
+    // Start time measurement
+    $startTime = microtime(true);
 }
-// Fetch the RSS URL from the module configuration
-$rssUrl = getConfig('rssurl');
-// suppress errors and process them manually
-libxml_use_internal_errors(true);
-// Attempt to load the RSS feed from the specified URL
-$rss = simplexml_load_file($rssUrl, 'SimpleXMLElement', LIBXML_NOCDATA);
-// Check if the RSS feed was successfully loaded
-if ($rss) {
-    echo '<div class="rss rss-feed">';
-    // Display the channel (feed) information if enabled
-    if (getConfig('show_feed_channel')) {
-        buildHead($rss);
+// Initialize Cache
+$cache = JFactory::getCache('mod_rss_reader', 'output');
+$cache->setCaching(getConfig('rssoutputcache'));
+$cache->setLifeTime(900);// 15 Min
+// Create a unique cache key based on module parameters
+$cacheKey = md5(serialize($params));
+// Try to load cached output
+$output = $cache->get($cacheKey);
+
+if ($output === false) {
+    // Start output buffering
+    ob_start();
+    
+    // Fetch the RSS URL from the module configuration
+    $rssUrl = getConfig('rssurl');
+    // suppress errors and process them manually
+    libxml_use_internal_errors(true);
+    // Attempt to load the RSS feed from the specified URL
+    $rss = simplexml_load_file($rssUrl, 'SimpleXMLElement', LIBXML_NOCDATA);
+    // Check if the RSS feed was successfully loaded
+    if ($rss) {
+        echo '<div class="rss rss-feed">';
+        // Display the channel (feed) information if enabled
+        if (getConfig('show_feed_channel')) {
+            echo buildHead($rss);
+        }
+        // Display the individual feed items
+        echo buildItems($rss);
+        echo '</div>';
+    } else {
+        // Display an error message if the RSS feed could not be loaded
+        echo '<p>Error: Failed to load RSS feed. Please check the feed URL.</p>';
+        foreach (libxml_get_errors() as $error) {
+            echo "<p>LibXML error: {$error->message}</p>";
+        }
+        libxml_clear_errors();
+        return;
     }
-    // Display the individual feed items
-    buildItems($rss);
-    echo '</div>';
-} else {
-    // Display an error message if the RSS feed could not be loaded
-    echo '<p>Error: Failed to load RSS feed. Please check the feed URL.</p>';
-    foreach (libxml_get_errors() as $error) {
-        echo "<p>LibXML error: {$error->message}</p>";
-    }
-    libxml_clear_errors();
-    return;
+
+    // Capture the output
+    $output = ob_get_clean();
+    // Store the output in cache
+    $cache->store($output, $cacheKey);
 }
+if (getConfig('debug')) {
+    // End time measurement
+    $endTime = microtime(true);
+    // Calculate execution time
+    $executionTime = $endTime - $startTime;
+    
+    echo '<p>Execution time: ' . $executionTime . ' seconds</p>';
+}
+echo $output;
 
 /**
 
@@ -226,6 +257,7 @@ function processDate($date) {
 */
 function buildHead($rss) {
     //initialize content variables
+    $rssHead = '';
     $chImTitle = '';
     $chDescription = '';
     $chImage = '';
@@ -282,18 +314,20 @@ function buildHead($rss) {
     }
     
     // Output the channel header
-    echo '<div class="rss rss-reader rss-channel rss-head" id="rss-head">';
-    echo $chImage;
-    echo $chTitle;
-    echo $chLang;
-    echo $chRights;
-    echo $chContactTec;
-    echo $chContactCon;
-    echo $chDescription;
-    echo $chPubDate;
-    echo $chCategory;
-    echo $chGenerator;
-    echo '</div>';
+    $rssHead .= '<div class="rss rss-reader rss-channel rss-head" id="rss-head">';
+    $rssHead .= $chImage;
+    $rssHead .= $chTitle;
+    $rssHead .= $chLang;
+    $rssHead .= $chRights;
+    $rssHead .= $chContactTec;
+    $rssHead .= $chContactCon;
+    $rssHead .= $chDescription;
+    $rssHead .= $chPubDate;
+    $rssHead .= $chCategory;
+    $rssHead .= $chGenerator;
+    $rssHead .= '</div>';
+    
+    return $rssHead;
 }
 
 /**
@@ -306,6 +340,7 @@ function buildHead($rss) {
 
 */
 function buildItems($rss) {
+    $rssItems = '';
     // Initialize item counter and limit
     $itemCounter=0;
     $itemTarget= getConfig('item_count');
@@ -457,25 +492,25 @@ function buildItems($rss) {
             }
         }
         // Output the item elements
-        echo '<div class="rss rss-item" id="rss-item-' . $itemCounter . '">';
-        echo $itemTitle;
-        echo $itemDate;
+        $rssItems .= '<div class="rss rss-item" id="rss-item-' . $itemCounter . '">';
+        $rssItems .= $itemTitle;
+        $rssItems .= $itemDate;
         if (calculateSimilarity($itemEncoded, $itemImage.$itemDescription)<70) {
-            echo $itemEncoded;
-            echo $itemDescription;
-            echo $itemImage;
+            $rssItems .= $itemEncoded;
+            $rssItems .= $itemDescription;
+            $rssItems .= $itemImage;
         }else {
-            echo $itemDescription;
-            echo $itemImage;
+            $rssItems .= $itemDescription;
+            $rssItems .= $itemImage;
         }
-        echo $additionalFields;
-        echo $itemCategories;
-        echo '<div class="rss rss-item-footer">';
-        echo $itemAuthor;
-        echo $itemSource;
-        echo $readMore;
-        echo '</div>';
-        echo '</div>';
+        $rssItems .= $additionalFields;
+        $rssItems .= $itemCategories;
+        $rssItems .= '<div class="rss rss-item-footer">';
+        $rssItems .= $itemAuthor;
+        $rssItems .= $itemSource;
+        $rssItems .= $readMore;
+        $rssItems .= '</div>';
+        $rssItems .= '</div>';
         
         // Increment the item counter
         $itemCounter++;
@@ -484,5 +519,6 @@ function buildItems($rss) {
             break;
         }
     }
+    return $rssItems;
 }
 ?>

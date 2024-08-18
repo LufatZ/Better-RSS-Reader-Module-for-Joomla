@@ -13,6 +13,7 @@
         <filename module="MOD_RSS_READER">mod_rss_reader.php</filename>
         <folder>tmpl</folder>
         <folder>language</folder>
+        <folder>css</folder>
         <folder>config</folder>
         <filename>LICENSE.txt</filename>
         <filename>mod_rss_reader.xml</filename>

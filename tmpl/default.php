@@ -19,12 +19,12 @@
 
 // Ensure the file is accessed from Joomla
 defined('_JEXEC') or die();
-
+echo '<div id="rss-reader-module" class="brssr rss rss-reader">';
 // Store global parameters
 $GLOBALS['params'] = $params;
 // Debugging: Output parameters if debug mode is enabled
 if (getConfig('debug')) {
-    processText(text:var_dump($params, true),tag:'div');
+    echo processText(text:print_r($params,true),tag:'div',class:'debug');
     // Start time measurement
     $startTime = microtime(true);
 }
@@ -78,10 +78,11 @@ if (getConfig('debug')) {
     // Calculate execution time
     $executionTime = $endTime - $startTime;
     
-    echo '<p>Execution time: ' . $executionTime . ' seconds</p>';
+    echo processText(text:'Execution time: ' . $executionTime . ' seconds',tag:'div',class:'debug');
 }
 echo $output;
-
+echo '</div>';
+JFactory::getDocument()->addStyleSheet(JURI::root() . '/modules/mod_rss_reader/css/default.css');
 /**
 
 * Fetch a configuration value from the global parameters

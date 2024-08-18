@@ -1,0 +1,43 @@
+#rss-reader-module {
+  $s-small: 0.5rem;
+  $s-def: 1rem;
+
+  .rssDiv {
+    border-radius: $s-small;
+    padding: $s-def;
+  }
+  .debug {
+    margin-bottom: $s-small;
+    background: #1c1c1e;
+    color: #f2f2f2;
+    border: solid red;
+    border-width: 15px 3px 3px 3px;
+    position: relative;
+    @extend .rssDiv;
+    &::before {
+      content: "DEBUG";
+      position: absolute;
+      top: -$s-def;
+    }
+  }
+  .rss.rss-feed {
+    display: flex;
+    width: 100%;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    > div {
+      @extend .rssDiv;
+      display: flex;
+      &.rss-head {
+        flex-basis: 100%;
+      }
+      &.rss-item {
+        flex-basis: 10px;
+        flex-direction: column;
+      }
+      > a {
+        text-decoration: none;
+      }
+    }
+  }
+}

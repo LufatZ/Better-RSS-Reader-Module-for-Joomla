@@ -27,6 +27,8 @@ if (getConfig('debug')) {
 }
 // Fetch the RSS URL from the module configuration
 $rssUrl = getConfig('rssurl');
+// suppress errors and process them manually
+libxml_use_internal_errors(true);
 // Attempt to load the RSS feed from the specified URL
 $rss = simplexml_load_file($rssUrl, 'SimpleXMLElement', LIBXML_NOCDATA);
 // Check if the RSS feed was successfully loaded
@@ -37,11 +39,16 @@ if ($rss) {
         buildHead($rss);
     }
     // Display the individual feed items
-        buildItems($rss);
+    buildItems($rss);
     echo '</div>';
 } else {
     // Display an error message if the RSS feed could not be loaded
-    echo '<p>Error: Failed to load RSS feed.</p>';
+    echo '<p>Error: Failed to load RSS feed. Please check the feed URL.</p>';
+    foreach (libxml_get_errors() as $error) {
+        echo "<p>LibXML error: {$error->message}</p>";
+    }
+    libxml_clear_errors();
+    return;
 }
 
 /**
@@ -119,7 +126,7 @@ function processImg($url = '', $desc = '', $link = '', $alt = '') {
 */
 function calculateSimilarity($text1, $text2) {
     // Remove HTML tags and split the text into words
-    $words1 = preg_split('/\s+/', strip_tags($text1));    
+    $words1 = preg_split('/\s+/', strip_tags($text1));
     $words2 = preg_split('/\s+/', strip_tags($text2));
     // Find common words between the two texts
     $commonWords = array_intersect($words1, $words2);
@@ -191,7 +198,7 @@ function processLink($link = '#', $text = '', $class = '') {
 * @return string The generated HTML element with the wrapped text
 
 */
-function processText($tag = 'p', $text = '', $class = '') {   
+function processText($tag = 'p', $text = '', $class = '') {
     return $text ? '<' . $tag . ' class="' . $class . '">' . $text . '</' . $tag . '>' : '';
 }
 /**
@@ -236,17 +243,17 @@ function buildHead($rss) {
     }
     // Prepare the channel description
     if (getConfig('show_feed_description') && isset($rss->channel->description)) {
-        $chDescription = '<div class="rss rss-description-container">' . processText(text: $rss->channel->description) . '</div>'; 
+        $chDescription = '<div class="rss rss-description-container">' . processText(text: $rss->channel->description) . '</div>';
     }
     // Prepare the channel image
-    if (getConfig('show_image') && isset($rss->channel->image)) {                                   
+    if (getConfig('show_image') && isset($rss->channel->image)) {
         $chImUrl = $rss->channel->image->url;
         $chImage = processImg(
             $rss->channel->image->url,
             $rss->channel->image->description,
             $rss->channel->image->link,
             $rss->channel->image->title
-        );
+            );
     }
     // Prepare other optional channel elements (lang, date, contacts, ...)
     if (getConfig('show_feed_language')&&isset($rss->channel->language)) {
@@ -275,7 +282,7 @@ function buildHead($rss) {
     }
     
     // Output the channel header
-    echo '<div class="rss rss-reader rss-channel rss-head" id="rss-head">'; 
+    echo '<div class="rss rss-reader rss-channel rss-head" id="rss-head">';
     echo $chImage;
     echo $chTitle;
     echo $chLang;
@@ -306,7 +313,7 @@ function buildItems($rss) {
     // Loop through each item in the RSS feed
     foreach ($rss->channel->item as $item) {
         // Initialize item elements
-        $itemTitle = '';                                                                
+        $itemTitle = '';
         $itemLink = '';
         $itemDescription = '';
         $itemImage = '';
@@ -320,7 +327,7 @@ function buildItems($rss) {
         $additionalFields = '';
         
         //prepare item link
-        if (isset($item->link)){                                                        
+        if (isset($item->link)){
             $itemLink = (string) $item->link;
         }
         // Prepare item title
@@ -328,17 +335,17 @@ function buildItems($rss) {
             $itemTitle = processLink(link:$itemLink,text:processText(text:$item->title,tag:getConfig('item_title_tag')));
         }
         //prepare item description
-        if (getConfig('show_item_description')&&isset($item->description)) {            
+        if (getConfig('show_item_description')&&isset($item->description)) {
             $itemDescription = limitWords(limit: intval(getConfig('item_desc_word_count')),text: $item->description);
         }
         //prepare item content:encoded
-        if (getConfig('show_item_content_encoded')&&isset($item->children('content', true)->encoded)) { 
+        if (getConfig('show_item_content_encoded')&&isset($item->children('content', true)->encoded)) {
             $itemEncoded = $item->children('content', true)->encoded;
         }
         //prepare item image
-        if (getConfig('show_image')){        
+        if (getConfig('show_image')){
             //initialize img variables
-            $itemImageUrl = '';                                                         
+            $itemImageUrl = '';
             $itemImageAlt = '';
             $itemImageDesc = '';
             
@@ -346,7 +353,7 @@ function buildItems($rss) {
                 $itemImageUrl = (string) $item->enclosure['url'];
             }
             //support for media tag
-            elseif (isset($item->children('media', true)->content->attributes()->url)){ 
+            elseif (isset($item->children('media', true)->content->attributes()->url)){
                 $itemImageUrl = $item->children('media', true)->content->attributes()->url;
                 $itemImageAlt = $item->children('media', true)->credit;
                 $itemImageDesc = $item->children('media',true)->description;
@@ -355,7 +362,7 @@ function buildItems($rss) {
             $itemImage = processImg(url: $itemImageUrl, link: $itemLink, alt: $itemImageAlt, desc: $itemImageDesc);
         }
         //prepare item author
-        if (getConfig('show_item_author')) {                                            
+        if (getConfig('show_item_author')) {
             $itemAuthorMail = '';
             $itemAuthorName = '';
             
@@ -363,41 +370,41 @@ function buildItems($rss) {
                 $itemAuthorMail = (string) $item->author;
             };
             //support dc tag
-            if (isset($item->children('dc', true)->creator)){                           
+            if (isset($item->children('dc', true)->creator)){
                 $itemAuthorName = $item->children('dc', true)->creator;
             }
             
             $itemAuthor = processText(text: $itemAuthorName . $itemAuthorMail, tag:'div');
         }
         //prepare item categories
-        if (getConfig('show_item_category')&&isset($item->category)) {                  
+        if (getConfig('show_item_category')&&isset($item->category)) {
             $itemCategories .= '<ul>';
             //add a new category entry in each loop
-            foreach ($item->category as $category){                                     
+            foreach ($item->category as $category){
                 $categoryUrl = '';
                 $categoryName = $category;
                 
                 if (isset($category['domain'])){
                     $categoryUrl = $category['domain'];
-                }                                                                       
+                }
                 $itemCategories .= processText(text:processLink(link:$categoryUrl,text:$categoryName),tag:'li');
             }
             $itemCategories .= '</ul>';
         }
         //prepare link to item comments
-        if (getConfig('show_item_comments_link')&&isset($item->comments)) {             
+        if (getConfig('show_item_comments_link')&&isset($item->comments)) {
             $itemCommentsUrl = processLink(link:$item->comments, text:'comments');
         }
         //prepare item date
-        if (getConfig('show_item_date')&&isset($item->pubDate)){                        
+        if (getConfig('show_item_date')&&isset($item->pubDate)){
             $itemDate = processText(text: processDate($item->pubDate));
         }
         //prepare link to item source rss file
-        if (getConfig('show_item_source')&&isset($item->source)) {                      
+        if (getConfig('show_item_source')&&isset($item->source)) {
             $itemSource = processLink(link: $item->source, text:'source');
         }
         //prepare link to item
-        if ($itemLink != ''){                                                           
+        if ($itemLink != ''){
             $readMore = processLink(link: $itemLink,text:'read more');
         }
         if ($FieldsConfig = getConfig('item_additional_fields')) {
@@ -407,7 +414,7 @@ function buildItems($rss) {
                 $tagOption = $field->additional_field_tag_option;
                 
                 switch ($tagOption){
-                    case 0: 
+                    case 0:
                         $additionalFields.= processText(text:$item->$tagName,tag:'h1');
                         break;
                     case 1:

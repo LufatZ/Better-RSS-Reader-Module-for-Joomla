@@ -1,19 +1,39 @@
 #rss-reader-module {
   $s-small: 0.5rem;
   $s-def: 1rem;
+  $dark: #282828;
+  $light: #e4e4e4;
 
-  .rssDiv {
+  %rssDiv {
     border-radius: $s-small;
     padding: $s-def;
   }
+
+  &.dark {
+    div.rss-overlay {
+      background: $dark;
+    }
+    * {
+      color: $light;
+    }
+  }
+  &.light {
+    div.rss-overlay {
+      background: $light;
+    }
+    * {
+      color: $dark;
+    }
+  }
+
   .debug {
     margin-bottom: $s-small;
-    background: #1c1c1e;
-    color: #f2f2f2;
+    background: $dark;
+    color: $light;
     border: solid red;
     border-width: 15px 3px 3px 3px;
     position: relative;
-    @extend .rssDiv;
+    @extend %rssDiv;
     &::before {
       content: "DEBUG";
       position: absolute;
@@ -24,15 +44,17 @@
     display: flex;
     width: 100%;
     flex-flow: row wrap;
-    justify-content: space-around;
+    justify-content: space-evenly;
+    gap: $s-small;
     > div {
-      @extend .rssDiv;
+      @extend %rssDiv;
       display: flex;
       &.rss-head {
         flex-basis: 100%;
       }
       &.rss-item {
-        flex-basis: 10px;
+        flex-basis: 450px;
+        flex-grow:1;
         flex-direction: column;
       }
       > a {

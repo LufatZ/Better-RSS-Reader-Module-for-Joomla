@@ -459,6 +459,30 @@
 				</field>
 
             </fieldset>
+            <fieldset name="style">
+            	<field
+                    name="predefined"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_USE_PREDEFINED_STYLE"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field
+                    name="theme"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RSS_READER_FIELD_DARK_OR_LIGHT"
+                    default="1"
+                    filter="integer"
+                    >
+                    <option value="0">Dark</option>
+                    <option value="1">Light</option>
+                </field>
+            </fieldset>
 		</fields>
 	</config>
 </extension>

@@ -19,9 +19,10 @@
 
 // Ensure the file is accessed from Joomla
 defined('_JEXEC') or die();
-echo '<div id="rss-reader-module" class="brssr rss rss-reader">';
 // Store global parameters
 $GLOBALS['params'] = $params;
+
+echo '<div id="rss-reader-module" class="brssr rss rss-reader '. (getConfig('theme') ? 'light' : 'dark') .'">';
 // Debugging: Output parameters if debug mode is enabled
 if (getConfig('debug')) {
     echo processText(text:print_r($params,true),tag:'div',class:'debug');
@@ -82,7 +83,9 @@ if (getConfig('debug')) {
 }
 echo $output;
 echo '</div>';
-JFactory::getDocument()->addStyleSheet(JURI::root() . '/modules/mod_rss_reader/css/default.css');
+if (getConfig('predefined')) {
+    JFactory::getDocument()->addStyleSheet(JURI::root() . '/modules/mod_rss_reader/css/default.css');
+}
 /**
 
 * Fetch a configuration value from the global parameters
@@ -315,7 +318,7 @@ function buildHead($rss) {
     }
     
     // Output the channel header
-    $rssHead .= '<div class="rss rss-reader rss-channel rss-head" id="rss-head">';
+    $rssHead .= '<div class="rss rss-reader rss-channel rss-head rss-overlay" id="rss-head">';
     $rssHead .= $chImage;
     $rssHead .= $chTitle;
     $rssHead .= $chLang;
@@ -493,7 +496,7 @@ function buildItems($rss) {
             }
         }
         // Output the item elements
-        $rssItems .= '<div class="rss rss-item" id="rss-item-' . $itemCounter . '">';
+        $rssItems .= '<div class="rss rss-item rss-overlay" id="rss-item-' . $itemCounter . '">';
         $rssItems .= $itemTitle;
         $rssItems .= $itemDate;
         if (calculateSimilarity($itemEncoded, $itemImage.$itemDescription)<70) {

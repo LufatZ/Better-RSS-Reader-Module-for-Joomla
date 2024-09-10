@@ -17,6 +17,10 @@
  * For details, see the LICENCE.txt file
  */
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+
+
 // Ensure the file is accessed from Joomla
 defined('_JEXEC') or die();
 // Store global parameters
@@ -30,7 +34,7 @@ if (getConfig('debug')) {
     $startTime = microtime(true);
 }
 // Initialize Cache
-$cache = JFactory::getCache('mod_rss_reader', 'output');
+$cache = Factory::getCache('mod_rss_reader', 'output');
 $cache->setCaching(getConfig('rssoutputcache'));
 $cache->setLifeTime(900);// 15 Min
 // Create a unique cache key based on module parameters
@@ -84,7 +88,22 @@ if (getConfig('debug')) {
 echo $output;
 echo '</div>';
 if (getConfig('predefined')) {
-    JFactory::getDocument()->addStyleSheet(JURI::root() . '/modules/mod_rss_reader/css/default.css');
+    Factory::getDocument()->addStyleSheet(URI::root() . '/modules/mod_rss_reader/css/default.css');
+    echo '
+    <script>
+            document.addEventListener("DOMContentLoaded", function () {
+        // Alle .image-container-Elemente finden
+        var containers = document.querySelectorAll(".rss-item figure");
+
+        containers.forEach(function (container) {
+            var img = container.querySelector("img"); // Das <img> im Container finden
+            var blurImg = img.cloneNode(); // Bild klonen
+            blurImg.classList.add("back"); // Weichgezeichnete Klasse hinzufügen
+            container.insertBefore(blurImg, img); // Das unscharfe Bild vor dem Originalbild einfügen
+        });
+        });
+    </script>
+    ';
 }
 /**
 
